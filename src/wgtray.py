@@ -4,7 +4,6 @@
 import sys
 import signal
 import subprocess
-import os
 import time
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
@@ -35,14 +34,8 @@ ICONDIR = find_icondir()
 ICONS = {
     "tray-disconnected": "wgtray.svg",
     "tray-connected": "wgtray-connected.svg",
-    "status-disconnected": "wgtray-status-disconnected.svg",
-    "status-connected": "wgtray-status-connected.svg",
     "vpn-inactive": "wgtray-vpn-inactive.svg",
     "vpn-active": "wgtray-vpn-active.svg",
-    "disconnect": "wgtray-disconnect.svg",
-    "folder": "wgtray-folder.svg",
-    "refresh": "wgtray-refresh.svg",
-    "quit": "wgtray-quit.svg",
 }
 
 
@@ -51,6 +44,7 @@ def get_icon(name):
         icon_path = ICONDIR / ICONS[name]
         if icon_path.exists():
             return QIcon(str(icon_path))
+        print(f"Warning: Icon not found: {icon_path}", file=sys.stderr)
     return QIcon()
 
 
@@ -106,8 +100,7 @@ def disconnect(name=None):
 
 
 def open_config_folder():
-    config_dir = os.environ.get("WG_TRAY_CONFIG_DIR", "/etc/wireguard")
-    subprocess.run(["xdg-open", config_dir], check=False)
+    subprocess.run(["xdg-open", "/etc/wireguard"], check=False)
 
 
 class WgTray:
@@ -165,9 +158,9 @@ class WgTray:
         configs = self._cache_configs
 
         if active:
-            status = QAction(get_icon("status-connected"), f"Connected: {', '.join(active)}", self.menu)
+            status = QAction(f"Connected: {', '.join(active)}", self.menu)
         else:
-            status = QAction(get_icon("status-disconnected"), "Not connected", self.menu)
+            status = QAction("Not connected", self.menu)
         status.setEnabled(False)
         self.menu.addAction(status)
         self.menu.addSeparator()
@@ -189,22 +182,22 @@ class WgTray:
         self.menu.addSeparator()
 
         if active:
-            disc_action = QAction(get_icon("disconnect"), "Disconnect", self.menu)
+            disc_action = QAction("Disconnect", self.menu)
             disc_action.triggered.connect(self.on_disconnect_all)
             self.menu.addAction(disc_action)
             self.menu.addSeparator()
 
-        folder_action = QAction(get_icon("folder"), "Open config folder", self.menu)
+        folder_action = QAction("Open config folder", self.menu)
         folder_action.triggered.connect(open_config_folder)
         self.menu.addAction(folder_action)
 
-        refresh_action = QAction(get_icon("refresh"), "Refresh", self.menu)
+        refresh_action = QAction("Refresh", self.menu)
         refresh_action.triggered.connect(self.on_refresh)
         self.menu.addAction(refresh_action)
 
         self.menu.addSeparator()
 
-        quit_action = QAction(get_icon("quit"), "Quit", self.menu)
+        quit_action = QAction("Quit", self.menu)
         quit_action.triggered.connect(self.app.quit)
         self.menu.addAction(quit_action)
 
