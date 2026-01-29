@@ -5,8 +5,8 @@
 </div>
 
 <p align="center">
-  <a href="https://github.com/DEIN_USER/wgtray/releases">
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/DEIN_USER/wgtray" />
+  <a href="https://github.com/0xNatal/wgtray/releases">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/0xNatal/wgtray" />
   </a>
   <a href="https://aur.archlinux.org/packages/wgtray">
     <img alt="AUR version" src="https://img.shields.io/aur/version/wgtray" />
@@ -14,11 +14,11 @@
   <a href="https://aur.archlinux.org/packages/wgtray">
     <img alt="AUR votes" src="https://img.shields.io/aur/votes/wgtray" />
   </a>
-  <a href="https://github.com/DEIN_USER/wgtray/stargazers">
-    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/DEIN_USER/wgtray" />
+  <a href="https://github.com/0xNatal/wgtray/stargazers">
+    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/0xNatal/wgtray" />
   </a>
-  <a href="https://github.com/DEIN_USER/wgtray/issues">
-    <img alt="GitHub Issues" src="https://img.shields.io/github/issues/DEIN_USER/wgtray" />
+  <a href="https://github.com/0xNatal/wgtray/issues">
+    <img alt="GitHub Issues" src="https://img.shields.io/github/issues/0xNatal/wgtray" />
   </a>
   <a href="https://www.gnu.org/licenses/gpl-3.0">
     <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg" />
