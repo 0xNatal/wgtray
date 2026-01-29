@@ -1,0 +1,27 @@
+# Build artifacts
+.SRCINFO
+*.tar.gz
+*.tar.zst
+*.pkg.tar.*
+pkg/
+src/wgtray-*/
+
+# Editor
+*.swp
+*~
+.vscode/
+.idea/
+*.kate-swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
