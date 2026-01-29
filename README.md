@@ -1,12 +1,24 @@
 <div align="center">
   <img src="res/icons/wgtray.svg" width="100px" alt="wgtray" />
   <h1>wgtray</h1>
-  <p>A lightweight third-party WireGuard tray client for Linux.</p>
+  <p>A lightweight third-party WireGuard tray client for Linux (Arch-based).</p>
 </div>
 
 <p align="center">
+  <a href="https://github.com/DEIN_USER/wgtray/releases">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/DEIN_USER/wgtray" />
+  </a>
   <a href="https://aur.archlinux.org/packages/wgtray">
     <img alt="AUR version" src="https://img.shields.io/aur/version/wgtray" />
+  </a>
+  <a href="https://aur.archlinux.org/packages/wgtray">
+    <img alt="AUR votes" src="https://img.shields.io/aur/votes/wgtray" />
+  </a>
+  <a href="https://github.com/DEIN_USER/wgtray/stargazers">
+    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/DEIN_USER/wgtray" />
+  </a>
+  <a href="https://github.com/DEIN_USER/wgtray/issues">
+    <img alt="GitHub Issues" src="https://img.shields.io/github/issues/DEIN_USER/wgtray" />
   </a>
   <a href="https://www.gnu.org/licenses/gpl-3.0">
     <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg" />
@@ -25,6 +37,7 @@
 - Simple right-click menu
 - Desktop notifications
 - Auto-refresh status every 30 seconds
+- Support for other Linux distributions (Ubuntu, Fedora, etc.)
 
 ## License
 
