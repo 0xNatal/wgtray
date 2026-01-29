@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=WireGuard Tray
+Comment=WireGuard VPN system tray client
+Exec=wgtray
+Icon=wgtray
+Type=Application
+Categories=Network;System;
+Keywords=vpn;wireguard;network;
+StartupNotify=false
