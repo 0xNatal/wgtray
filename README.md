@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="res/icons/wgtray.svg" width="100px" alt="wgtray" />
+  <img src="res/icons/wgtray.svg" width="200px" alt="wgtray" />
   <h1>wgtray</h1>
   <p>A lightweight third-party WireGuard tray client for Linux (Arch-based).</p>
 </div>
