@@ -1,15 +1,20 @@
-# wgtray
+<div align="center">
+  <img src="res/icons/wgtray.svg" width="100px" alt="wgtray" />
+  <h1>wgtray</h1>
+  <p>A lightweight third-party WireGuard tray client for Linux.</p>
+</div>
 
 <p align="center">
-  <img width="200" height="200" src="res/icons/wgtray.svg">
+  <a href="https://aur.archlinux.org/packages/wgtray">
+    <img alt="AUR version" src="https://img.shields.io/aur/version/wgtray" />
+  </a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0">
+    <img alt="License: GPL v3" src="https://img.shields.io/badge/License-GPLv3-blue.svg" />
+  </a>
 </p>
 
-[![AUR version](https://img.shields.io/aur/version/wgtray)](https://aur.archlinux.org/packages/wgtray)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-
-> ⚠️ **Work in Progress** – This project is under active development and not yet ready for production use.
-
-A lightweight third-party WireGuard tray client for Linux.
+> [!WARNING]
+> **Work in Progress** – This project is under active development and not yet ready for production use.
 
 ## Planned Features
 
