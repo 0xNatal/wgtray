@@ -1,3 +1,13 @@
+## [1.0.1] - 2026-01-31
+
+### 🚀 Features
+
+- Add GNOME autostart flag
+
+### 📚 Documentation
+
+- Mark AUR package as complete
+- Improve post-install message
 ## [1.0.0] - 2026-01-31
 
 ### 🚀 Features
@@ -8,6 +18,7 @@
 ### 💼 Other
 
 - Add Makefile and PKGBUILD for AUR
+- V1.0.0
 
 ### 🚜 Refactor
 
