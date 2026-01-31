@@ -1,8 +1,17 @@
+## [1.0.2] - 2026-01-31
+
+### 🚀 Features
+
+- Add post-upgrade message
 ## [1.0.1] - 2026-01-31
 
 ### 🚀 Features
 
 - Add GNOME autostart flag
+
+### 💼 Other
+
+- V1.0.1
 
 ### 📚 Documentation
 
