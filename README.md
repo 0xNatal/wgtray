@@ -8,6 +8,9 @@
   <a href="https://github.com/0xNatal/wgtray/releases">
     <img alt="GitHub Release" src="https://img.shields.io/github/v/release/0xNatal/wgtray" />
   </a>
+  <a href="https://aur.archlinux.org/packages/wgtray">
+    <img alt="AUR version" src="https://img.shields.io/aur/version/wgtray" />
+  </a>
   <a href="https://github.com/0xNatal/wgtray/stargazers">
     <img alt="GitHub Stars" src="https://img.shields.io/github/stars/0xNatal/wgtray" />
   </a>
