@@ -33,7 +33,7 @@
 
 ## Roadmap
 
-- [ ] AUR package
+- [x] AUR package
 - [ ] Settings dialog
 - [ ] Configuration file
 - [ ] Keyboard shortcuts
