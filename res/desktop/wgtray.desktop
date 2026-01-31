@@ -1,9 +1,10 @@
 [Desktop Entry]
-Name=WireGuard Tray
-Comment=WireGuard VPN system tray client
+Name=wgtray
+Comment=A lightweight third-party WireGuard tray client
 Exec=wgtray
 Icon=wgtray
 Type=Application
 Categories=Network;System;
 Keywords=vpn;wireguard;network;
 StartupNotify=false
+X-GNOME-Autostart-enabled=true
