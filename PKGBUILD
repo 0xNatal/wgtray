@@ -12,6 +12,7 @@ depends=(
     'polkit'
     'qt6-svg'
 )
+install=wgtray.install
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
 sha256sums=('SKIP')
 
