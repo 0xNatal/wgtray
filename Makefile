@@ -30,7 +30,7 @@ install:
 	install -Dm644 LICENSE $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/LICENSE
 	@echo ""
 	@echo "Installation complete!"
-	@echo "Run: $(PKGNAME)"
+	@echo "Run 'wgtray' to start, or logout/login for autostart."
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PKGNAME)
