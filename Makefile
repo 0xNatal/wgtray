@@ -14,7 +14,7 @@ all:
 check-deps:
 	@echo "Checking dependencies..."
 	@command -v python3 >/dev/null || { echo "ERROR: python3 not found"; exit 1; }
-	@python3 -c "import PyQt6" 2>/dev/null || { echo "ERROR: PyQt6 not found. Install: sudo pacman -S python-pyqt6"; exit 1; }
+	@python3 -c "from PyQt6.QtWidgets import QApplication" 2>/dev/null || { echo "ERROR: PyQt6 not found. Install: sudo pacman -S python-pyqt6"; exit 1; }
 	@command -v wg >/dev/null || { echo "ERROR: wireguard-tools not found. Install: sudo pacman -S wireguard-tools"; exit 1; }
 	@command -v pkexec >/dev/null || { echo "ERROR: polkit not found. Install: sudo pacman -S polkit"; exit 1; }
 	@echo "All dependencies found!"

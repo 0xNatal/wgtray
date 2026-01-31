@@ -4,6 +4,7 @@
 import sys
 import signal
 import subprocess
+import os
 import time
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
@@ -34,8 +35,6 @@ ICONDIR = find_icondir()
 ICONS = {
     "tray-disconnected": "wgtray.svg",
     "tray-connected": "wgtray-connected.svg",
-    "vpn-inactive": "wgtray-vpn-inactive.svg",
-    "vpn-active": "wgtray-vpn-active.svg",
 }
 
 
@@ -75,6 +74,12 @@ def get_active_connections():
     return []
 
 
+def check_config_dir_permissions():
+    config_dir = Path("/etc/wireguard")
+    if config_dir.exists() and not os.access(config_dir, os.R_OK):
+        subprocess.run(["pkexec", "chmod", "755", str(config_dir)], check=False)
+
+
 def get_configs():
     output, code = run_script("list-configs.sh")
     if code == 0 and output:
@@ -83,19 +88,15 @@ def get_configs():
 
 
 def connect(name):
-    output, code = run_script("connect.sh", name, use_pkexec=True)
-    if output:
-        print(output)
+    _, code = run_script("connect.sh", name, use_pkexec=True)
     return code == 0
 
 
 def disconnect(name=None):
     if name:
-        output, code = run_script("disconnect.sh", name, use_pkexec=True)
+        _, code = run_script("disconnect.sh", name, use_pkexec=True)
     else:
-        output, code = run_script("disconnect.sh", use_pkexec=True)
-    if output:
-        print(output)
+        _, code = run_script("disconnect.sh", use_pkexec=True)
     return code == 0
 
 
@@ -109,10 +110,11 @@ class WgTray:
         self.app.setQuitOnLastWindowClosed(False)
         self.app.setApplicationName("wgtray")
 
+        check_config_dir_permissions()
+
         self.menu = QMenu()
         self.tray = QSystemTrayIcon()
         self.tray.setContextMenu(self.menu)
-        self.tray.setVisible(True)
 
         self.menu.aboutToShow.connect(self.build_menu)
 
@@ -127,6 +129,7 @@ class WgTray:
 
         self.update_icon()
         self.build_menu()
+        self.tray.setVisible(True)
 
     def _refresh_cache(self, force=False):
         now = time.time()
@@ -168,10 +171,10 @@ class WgTray:
         if configs:
             for name in configs:
                 if name in active:
-                    action = QAction(get_icon("vpn-active"), name, self.menu)
+                    action = QAction(f"● {name}", self.menu)
                     action.triggered.connect(lambda checked, n=name: self.on_disconnect(n))
                 else:
-                    action = QAction(get_icon("vpn-inactive"), name, self.menu)
+                    action = QAction(name, self.menu)
                     action.triggered.connect(lambda checked, n=name: self.on_connect(n))
                 self.menu.addAction(action)
         else:

@@ -34,6 +34,15 @@
 ## Roadmap
 
 - [ ] AUR package
+- [ ] Settings dialog
+- [ ] Configuration file
+- [ ] Keyboard shortcuts
+- [ ] About dialog
+- [ ] Connection timer
+- [ ] Left-click quick action
+- [ ] Real-time status updates (filesystem watching)
+- [ ] Logging
+- [ ] Icon themes (light/dark)
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
 ## Requirements
@@ -44,11 +53,16 @@
 - polkit
 
 ## Installation
+
 ```bash
 git clone https://github.com/0xNatal/wgtray.git
 cd wgtray
 sudo make install
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## License
 
