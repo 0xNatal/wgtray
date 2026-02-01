@@ -1,4 +1,7 @@
 post_install() {
+    echo ""
+    cat /usr/share/doc/wgtray/ascii-logo.txt 2>/dev/null || true
+    echo ""
     echo "==> wgtray installed successfully!"
     echo ""
     echo "    Start:     wgtray"

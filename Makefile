@@ -45,7 +45,10 @@ install:
 	# Docs
 	install -Dm644 README.md $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/README.md
 	install -Dm644 LICENSE $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/LICENSE
+	install -Dm644 res/ascii-logo.txt $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/ascii-logo.txt
 	
+	@echo ""
+	@cat res/ascii-logo.txt 2>/dev/null || true
 	@echo ""
 	@echo "Installation complete!"
 	@echo "Run 'wgtray' to start, or logout/login for autostart."
