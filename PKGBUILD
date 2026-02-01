@@ -1,13 +1,15 @@
 # Maintainer: Natal Bumann wgtray@rcklt.ch
 pkgname=wgtray
-pkgver=1.0.2
+pkgver=1.1.0
 pkgrel=1
 pkgdesc="WireGuard system tray client for easy VPN switching"
 arch=('any')
 url="https://github.com/0xNatal/wgtray"
 license=('GPL-3.0-or-later')
 depends=(
+    'python'
     'python-pyqt6'
+    'python-pyroute2'
     'wireguard-tools'
     'polkit'
     'qt6-svg'

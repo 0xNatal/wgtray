@@ -29,20 +29,20 @@
 
 - Quick switch between VPN configurations
 - Visual status indicator (connected/disconnected)
+- Real-time status updates via Netlink
 - Uses standard `/etc/wireguard` configs
 - Polkit integration for secure authentication
 - Desktop notifications
-- Auto-refresh status
+- Left-click to toggle connection
 
 ## Roadmap
 
 - [x] AUR package
-- [ ] Settings dialog
 - [x] Configuration file
 - [x] Left-click quick action
-- [ ] About dialog
+- [x] About dialog
+- [x] Real-time status updates (Netlink)
 - [ ] Keyboard shortcuts
-- [ ] Real-time status updates (filesystem watching)
 - [ ] Logging
 - [ ] Icon themes (light/dark)
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
@@ -51,16 +51,44 @@
 
 - Arch Linux (or Arch-based)
 - python-pyqt6
+- python-pyroute2
 - wireguard-tools
 - polkit
+- qt6-svg
 
 ## Installation
 
+### AUR (recommended)
+
 ```bash
+paru -S wgtray
+# or: yay -S wgtray
+```
+
+### Manual
+
+```bash
+# Install dependencies
+sudo pacman -S python-pyqt6 python-pyroute2 wireguard-tools polkit qt6-svg
+
+# Clone and install
 git clone https://github.com/0xNatal/wgtray.git
 cd wgtray
 sudo make install
 ```
+
+## Usage
+
+```bash
+wgtray
+```
+
+The app starts minimized in the system tray. 
+
+- **Left-click**: Toggle last used connection
+- **Right-click**: Open menu with all configurations
+
+wgtray auto-starts on login. To disable, remove `/etc/xdg/autostart/wgtray.desktop`.
 
 ## Contributing
 
