@@ -10,7 +10,7 @@ from .constants import VERSION, ICONDIR, ICONS
 from .config import load_config, save_config
 from .monitor import NetlinkMonitor
 from .settings import SettingsDialog
-from .logger import setup_logging, logger, get_log_path
+from .logger import setup_logging, logger
 from .wireguard import (
     get_active_connections, get_configs, connect, disconnect,
     check_config_dir_permissions, open_config_folder
@@ -218,10 +218,6 @@ class WgTray:
         folder.triggered.connect(open_config_folder)
         self.menu.addAction(folder)
 
-        refresh = QAction("Refresh", self.menu)
-        refresh.triggered.connect(self.on_refresh)
-        self.menu.addAction(refresh)
-
         self.menu.addSeparator()
 
         settings = QAction("Settings", self.menu)
@@ -297,6 +293,7 @@ class WgTray:
 
     def on_settings(self):
         dialog = SettingsDialog(self._config, self._cache_configs)
+        dialog.refresh_clicked.connect(self.on_refresh)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             old_mode = self._config.get("monitor_mode")
             old_interval = self._config.get("poll_interval")
@@ -327,7 +324,6 @@ class WgTray:
             f"<p>Version {VERSION}</p>"
             f"<p>A lightweight WireGuard system tray client for Linux.</p>"
             f"<p>Monitor: {self._monitor_mode.capitalize()}</p>"
-            f"<p>Log: <code>{get_log_path()}</code></p>"
             f"<p><a href='https://github.com/0xNatal/wgtray'>github.com/0xNatal/wgtray</a></p>"
             f"<p>License: GPL-3.0</p>"
         )

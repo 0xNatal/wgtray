@@ -5,10 +5,13 @@ from PyQt6.QtWidgets import (
     QCheckBox, QComboBox, QPushButton, QGroupBox,
     QSpinBox
 )
+from PyQt6.QtCore import Qt, pyqtSignal
 from .config import is_autostart_enabled, set_autostart
+from .logger import get_log_path
 
 
 class SettingsDialog(QDialog):
+    refresh_clicked = pyqtSignal()
     def __init__(self, config, configs_list, parent=None):
         super().__init__(parent)
         self.config = config.copy()
@@ -99,11 +102,24 @@ class SettingsDialog(QDialog):
         poll_layout.addStretch()
         adv_layout.addLayout(poll_layout)
 
+        log_layout = QHBoxLayout()
+        log_layout.addWidget(QLabel("Log file:"))
+        log_path = QLabel(f"<a href='file://{get_log_path()}'>{get_log_path()}</a>")
+        log_path.setOpenExternalLinks(True)
+        log_path.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
+        log_layout.addWidget(log_path, 1)
+        adv_layout.addLayout(log_layout)
+
         layout.addWidget(adv_group)
 
         # === Buttons ===
         layout.addStretch()
         btn_layout = QHBoxLayout()
+        
+        refresh_btn = QPushButton("Refresh")
+        refresh_btn.clicked.connect(self.refresh_clicked.emit)
+        btn_layout.addWidget(refresh_btn)
+        
         btn_layout.addStretch()
 
         cancel_btn = QPushButton("Cancel")
