@@ -8,7 +8,7 @@ import os
 import time
 import json
 from pathlib import Path
-from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
+from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMessageBox
 from PyQt6.QtGui import QIcon, QAction
 from PyQt6.QtCore import QTimer
 
@@ -222,6 +222,10 @@ class WgTray:
 
         self.menu.addSeparator()
 
+        about_action = QAction("About", self.menu)
+        about_action.triggered.connect(self.on_about)
+        self.menu.addAction(about_action)
+
         quit_action = QAction("Quit", self.menu)
         quit_action.triggered.connect(self.app.quit)
         self.menu.addAction(quit_action)
@@ -281,6 +285,17 @@ class WgTray:
         self._refresh_cache(force=True)
         self.update_icon()
         self.build_menu()
+
+    def on_about(self):
+        QMessageBox.about(
+            None,
+            "About wgtray",
+            "<h3>wgtray</h3>"
+            "<p>Version 1.0.2</p>"
+            "<p>A lightweight WireGuard system tray client for Linux.</p>"
+            "<p><a href='https://github.com/0xNatal/wgtray'>github.com/0xNatal/wgtray</a></p>"
+            "<p>License: GPL-3.0</p>"
+        )
 
     def run(self):
         sys.exit(self.app.exec())
