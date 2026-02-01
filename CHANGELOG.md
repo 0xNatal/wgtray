@@ -1,8 +1,26 @@
+## [1.2.0] - 2026-02-01
+
+### 🚀 Features
+
+- Add light/dark icon theme support with auto-detection
+
+### 🐛 Bug Fixes
+
+- Stop running process before uninstall/upgrade
+- Settings dialog icon path for new theme structure
+
+### 📚 Documentation
+
+- Update roadmap and releasing instructions
 ## [1.1.1] - 2026-02-01
 
 ### 🚀 Features
 
 - Show ascii logo on installation
+
+### 💼 Other
+
+- V1.1.1
 ## [1.1.0] - 2026-02-01
 
 ### 🚀 Features
