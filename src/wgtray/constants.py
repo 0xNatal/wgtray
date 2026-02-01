@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-VERSION = "1.1.1"
+VERSION = "1.0.3"
 
 def find_libdir():
     system_path = Path("/usr/share/wgtray/lib")
@@ -21,11 +21,14 @@ AUTOSTART_FILE = Path.home() / ".config" / "autostart" / "wgtray.desktop"
 SYSTEM_DESKTOP = Path("/usr/share/applications/wgtray.desktop")
 
 ICONS = {
-    "disconnected": "wgtray.svg",
-    "connected": "wgtray-connected.svg",
-    # Future: light/dark variants
-    "disconnected-light": "wgtray-light.svg",
-    "connected-light": "wgtray-connected-light.svg",
+    "disconnected": {
+        "dark": "wgtray.svg",
+        "light": "wgtray-light.svg",
+    },
+    "connected": {
+        "dark": "wgtray-connected.svg",
+        "light": "wgtray-connected-light.svg",
+    },
 }
 
 DEFAULT_CONFIG = {

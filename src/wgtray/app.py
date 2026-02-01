@@ -16,13 +16,38 @@ from .wireguard import (
 )
 
 
-def get_icon(name, theme="dark"):
+def detect_system_theme():
+    """Detect if system uses light or dark theme."""
+    try:
+        app = QApplication.instance()
+        if app:
+            palette = app.palette()
+            bg = palette.window().color()
+            # If background is dark, we need light icons
+            is_dark_bg = bg.lightness() < 128
+            return "light" if is_dark_bg else "dark"
+    except Exception:
+        pass
+    return "dark"  # Default fallback
+
+
+def get_icon(name, theme="auto"):
     """Get icon by name, respecting theme."""
-    # TODO: implement light theme icons
-    icon_file = ICONS.get(name, ICONS["disconnected"])
+    if theme == "auto":
+        theme = detect_system_theme()
+    
+    icon_variants = ICONS.get(name, ICONS["disconnected"])
+    icon_file = icon_variants.get(theme, icon_variants.get("dark"))
     icon_path = ICONDIR / icon_file
+    
+    # Fallback to dark theme if light icon doesn't exist
+    if not icon_path.exists() and theme == "light":
+        icon_file = icon_variants.get("dark")
+        icon_path = ICONDIR / icon_file
+    
     if icon_path.exists():
         return QIcon(str(icon_path))
+    
     print(f"Warning: Icon not found: {icon_path}", file=sys.stderr)
     return QIcon()
 
@@ -32,11 +57,13 @@ class WgTray:
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
         self.app.setApplicationName("wgtray")
-        self.app.setWindowIcon(get_icon("disconnected"))
+        
+        self._config = load_config()
+        
+        self.app.setWindowIcon(get_icon("disconnected", self._config.get("icon_theme", "auto")))
 
         check_config_dir_permissions()
 
-        self._config = load_config()
         self._cache_active = []
         self._cache_configs = []
         self._cache_time = 0
@@ -134,7 +161,6 @@ class WgTray:
         self._last_state = tuple(sorted(active))
 
         theme = self._config.get("icon_theme", "auto")
-        # TODO: detect system theme when "auto"
 
         if active:
             self.tray.setIcon(get_icon("connected", theme))
