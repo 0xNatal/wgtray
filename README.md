@@ -47,7 +47,9 @@
 - [x] Settings dialog
 - [x] Icon themes (light/dark)
 - [x] Logging
-- [ ] Keyboard shortcuts
+- [ ] Connection stats (traffic, handshake)
+- [ ] CLI flags
+- [ ] Peer status
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
 ## Requirements
