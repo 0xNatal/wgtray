@@ -19,7 +19,7 @@ Where `X.Y.Z` is the version number to create (e.g. `1.0.0`)
 
 ## What the script does
 
-1. Updates version in `PKGBUILD`
+1. Updates version in `PKGBUILD` and `src/wgtray/constants.py`
 2. Generates `CHANGELOG.md`
 3. Shows diff for review
 4. Creates commit and tag

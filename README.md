@@ -45,9 +45,9 @@
 - [x] About dialog
 - [x] Real-time status updates (Netlink)
 - [x] Settings dialog
+- [x] Icon themes (light/dark)
 - [ ] Keyboard shortcuts
 - [ ] Logging
-- [ ] Icon themes (light/dark)
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
 ## Requirements
