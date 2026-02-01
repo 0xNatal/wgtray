@@ -13,7 +13,8 @@ from .settings import SettingsDialog
 from .logger import setup_logging, logger
 from .wireguard import (
     get_active_connections, get_configs, connect, disconnect,
-    check_config_dir_permissions, open_config_folder
+    check_config_dir_permissions, open_config_folder,
+    get_connection_stats, format_bytes, format_handshake
 )
 
 
@@ -108,11 +109,9 @@ class WgTray:
         if mode == "netlink" and not use_netlink:
             print("Warning: Netlink requested but not available, falling back to polling", file=sys.stderr)
 
-        if not use_netlink or mode == "polling":
-            interval = self._config.get("poll_interval", 3000)
-            self.poll_timer.start(interval)
-        else:
-            self.poll_timer.start(5000)
+        # Always run poll timer for stats updates
+        interval = self._config.get("poll_interval", 3000)
+        self.poll_timer.start(interval)
 
         self._monitor_mode = "netlink" if use_netlink else "polling"
         logger.info(f"Monitor mode: {self._monitor_mode}")
@@ -139,6 +138,9 @@ class WgTray:
         if state != self._last_state:
             self._last_state = state
             self.update_icon()
+        elif active:
+            # Update tooltip with fresh stats only when connected
+            self._update_tooltip(active)
 
     def on_network_change(self):
         QTimer.singleShot(300, self.update_icon)
@@ -156,6 +158,23 @@ class WgTray:
         icon = QSystemTrayIcon.MessageIcon.Critical if error else QSystemTrayIcon.MessageIcon.Information
         self.tray.showMessage(title, message, icon, 3000)
 
+    def _update_tooltip(self, active):
+        """Update tooltip with connection stats."""
+        if active:
+            tooltip_lines = ["WireGuard: Connected"]
+            for iface in active:
+                stats = get_connection_stats(iface)
+                if stats:
+                    rx = format_bytes(stats["rx_bytes"])
+                    tx = format_bytes(stats["tx_bytes"])
+                    hs = format_handshake(stats["latest_handshake"])
+                    tooltip_lines.append(f"{iface}: ↓{rx} ↑{tx} ({hs})")
+                else:
+                    tooltip_lines.append(iface)
+            self.tray.setToolTip("\n".join(tooltip_lines))
+        else:
+            self.tray.setToolTip("WireGuard: Not connected")
+
     def update_icon(self):
         self._refresh_cache(force=True)
         active = self._cache_active
@@ -165,10 +184,10 @@ class WgTray:
 
         if active:
             self.tray.setIcon(get_icon("connected", theme))
-            self.tray.setToolTip(f"WireGuard: {', '.join(active)}")
         else:
             self.tray.setIcon(get_icon("disconnected", theme))
-            self.tray.setToolTip("WireGuard: Not connected")
+        
+        self._update_tooltip(active)
 
     def build_menu(self):
         self.menu.clear()

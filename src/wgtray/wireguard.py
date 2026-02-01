@@ -3,6 +3,7 @@
 import subprocess
 import sys
 import os
+import time
 from pathlib import Path
 from .constants import LIBDIR
 
@@ -40,6 +41,60 @@ def get_configs():
     if code == 0 and output:
         return [x for x in output.split("\n") if x]
     return []
+
+
+def get_connection_stats(interface):
+    """Get connection stats for a WireGuard interface.
+    
+    Returns dict with:
+        - rx_bytes: bytes received
+        - tx_bytes: bytes sent
+        - latest_handshake: seconds since last handshake (or None)
+    """
+    output, code = run_script("stats.sh", interface, use_pkexec=True)
+    if code != 0 or not output:
+        return None
+    
+    try:
+        parts = output.split()
+        if len(parts) >= 3:
+            return {
+                "rx_bytes": int(parts[0]),
+                "tx_bytes": int(parts[1]),
+                "latest_handshake": int(parts[2]) if int(parts[2]) > 0 else None
+            }
+    except (ValueError, IndexError):
+        pass
+    return None
+
+
+def format_bytes(bytes_val):
+    """Format bytes to human readable string."""
+    if bytes_val < 1024:
+        return f"{bytes_val} B"
+    elif bytes_val < 1024 * 1024:
+        return f"{bytes_val / 1024:.1f} KB"
+    elif bytes_val < 1024 * 1024 * 1024:
+        return f"{bytes_val / (1024 * 1024):.1f} MB"
+    else:
+        return f"{bytes_val / (1024 * 1024 * 1024):.2f} GB"
+
+
+def format_handshake(timestamp):
+    """Format handshake timestamp to human readable string."""
+    if not timestamp:
+        return "never"
+    
+    diff = int(time.time()) - timestamp
+    
+    if diff < 60:
+        return f"{diff}s ago"
+    elif diff < 3600:
+        return f"{diff // 60}m ago"
+    elif diff < 86400:
+        return f"{diff // 3600}h ago"
+    else:
+        return f"{diff // 86400}d ago"
 
 
 def connect(name):

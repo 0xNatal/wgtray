@@ -29,6 +29,7 @@
 
 - Quick switch between VPN configurations
 - Visual status indicator (connected/disconnected)
+- Connection stats (traffic, last handshake)
 - Real-time status updates via Netlink
 - Settings dialog with customization options
 - Auto-connect on startup
@@ -47,7 +48,7 @@
 - [x] Settings dialog
 - [x] Icon themes (light/dark)
 - [x] Logging
-- [ ] Connection stats (traffic, handshake)
+- [x] Connection stats (traffic, handshake)
 - [ ] CLI flags
 - [ ] Peer status
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)

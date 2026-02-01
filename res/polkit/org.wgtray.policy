@@ -29,4 +29,16 @@
     <annotate key="org.freedesktop.policykit.exec.path">/usr/share/wgtray/lib/disconnect.sh</annotate>
     <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
   </action>
+
+  <action id="org.wgtray.pkexec.stats">
+    <description>Read WireGuard connection stats</description>
+    <message>Reading VPN statistics</message>
+    <defaults>
+      <allow_any>yes</allow_any>
+      <allow_inactive>yes</allow_inactive>
+      <allow_active>yes</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/wgtray/lib/stats.sh</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
 </policyconfig>
