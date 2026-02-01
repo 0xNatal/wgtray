@@ -38,11 +38,10 @@
 
 - [x] AUR package
 - [ ] Settings dialog
-- [ ] Configuration file
-- [ ] Keyboard shortcuts
+- [x] Configuration file
+- [x] Left-click quick action
 - [ ] About dialog
-- [ ] Connection timer
-- [ ] Left-click quick action
+- [ ] Keyboard shortcuts
 - [ ] Real-time status updates (filesystem watching)
 - [ ] Logging
 - [ ] Icon themes (light/dark)
