@@ -10,6 +10,7 @@ from .constants import VERSION, ICONDIR, ICONS
 from .config import load_config, save_config
 from .monitor import NetlinkMonitor
 from .settings import SettingsDialog
+from .logger import setup_logging, logger, get_log_path
 from .wireguard import (
     get_active_connections, get_configs, connect, disconnect,
     check_config_dir_permissions, open_config_folder
@@ -53,12 +54,17 @@ def get_icon(name, theme="auto"):
 
 
 class WgTray:
-    def __init__(self):
+    def __init__(self, debug: bool = False):
+        self._debug = debug
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
         self.app.setApplicationName("wgtray")
         
         self._config = load_config()
+        
+        # Setup logging
+        setup_logging(debug=self._debug)
+        logger.info(f"wgtray {VERSION} starting")
         
         self.app.setWindowIcon(get_icon("disconnected", self._config.get("icon_theme", "auto")))
 
@@ -115,6 +121,7 @@ class WgTray:
             self.poll_timer.start(5000)
 
         self._monitor_mode = "netlink" if use_netlink else "polling"
+        logger.info(f"Monitor mode: {self._monitor_mode}")
 
     def _auto_connect(self):
         """Auto-connect to default or last VPN."""
@@ -253,25 +260,34 @@ class WgTray:
         for conn in active:
             disconnect(conn)
 
+        logger.info(f"Connecting to {name}")
         if connect(name):
+            logger.info(f"Connected to {name}")
             self.show_notification("WireGuard", f"Connected to {name}")
             self._config["last_connection"] = name
             save_config(self._config)
         else:
+            logger.error(f"Failed to connect to {name}")
             self.show_notification("WireGuard", f"Failed to connect to {name}", error=True)
         self.update_icon()
 
     def on_disconnect(self, name):
+        logger.info(f"Disconnecting from {name}")
         if disconnect(name):
+            logger.info(f"Disconnected from {name}")
             self.show_notification("WireGuard", f"Disconnected from {name}")
         else:
+            logger.error(f"Failed to disconnect from {name}")
             self.show_notification("WireGuard", f"Failed to disconnect from {name}", error=True)
         self.update_icon()
 
     def on_disconnect_all(self):
+        logger.info("Disconnecting all")
         if disconnect():
+            logger.info("All connections closed")
             self.show_notification("WireGuard", "All connections closed")
         else:
+            logger.error("Failed to disconnect")
             self.show_notification("WireGuard", "Failed to disconnect", error=True)
         self.update_icon()
 
@@ -287,6 +303,7 @@ class WgTray:
 
             self._config = dialog.get_config()
             save_config(self._config)
+            logger.info("Settings saved")
 
             # Restart monitoring if settings changed
             if (self._config.get("monitor_mode") != old_mode or
@@ -310,11 +327,13 @@ class WgTray:
             f"<p>Version {VERSION}</p>"
             f"<p>A lightweight WireGuard system tray client for Linux.</p>"
             f"<p>Monitor: {self._monitor_mode.capitalize()}</p>"
+            f"<p>Log: <code>{get_log_path()}</code></p>"
             f"<p><a href='https://github.com/0xNatal/wgtray'>github.com/0xNatal/wgtray</a></p>"
             f"<p>License: GPL-3.0</p>"
         )
 
     def quit(self):
+        logger.info("wgtray shutting down")
         if self.netlink:
             self.netlink.stop()
         self.poll_timer.stop()

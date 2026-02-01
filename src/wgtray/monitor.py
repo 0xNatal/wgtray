@@ -1,8 +1,8 @@
 """Network monitoring for wgtray."""
 
-import sys
 import time
 from PyQt6.QtCore import QThread, pyqtSignal
+from .logger import logger
 
 
 class NetlinkMonitor(QThread):
@@ -18,8 +18,9 @@ class NetlinkMonitor(QThread):
             with IPRoute():
                 pass
             self._available = True
+            logger.debug("Netlink monitoring available")
         except Exception as e:
-            print(f"Netlink not available: {e}", file=sys.stderr)
+            logger.warning(f"Netlink not available: {e}")
 
     @property
     def available(self):
@@ -48,11 +49,13 @@ class NetlinkMonitor(QThread):
                                 is_wg = li_attrs.get("IFLA_INFO_KIND") == "wireguard"
 
                             if is_wg or ifname.startswith("wg"):
+                                logger.debug(f"Netlink: {ifname} {event}")
                                 self.changed.emit()
                 except Exception:
                     if self._running:
                         time.sleep(0.5)
 
     def stop(self):
+        logger.debug("Stopping Netlink monitor")
         self._running = False
         self.wait(2000)

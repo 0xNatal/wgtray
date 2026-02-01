@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Entry point for wgtray."""
 
+import sys
 import signal
 from .app import WgTray
 
@@ -9,7 +10,8 @@ signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 def main():
-    app = WgTray()
+    debug = "--debug" in sys.argv or "-d" in sys.argv
+    app = WgTray(debug=debug)
     app.run()
 
 

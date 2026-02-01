@@ -46,8 +46,8 @@
 - [x] Real-time status updates (Netlink)
 - [x] Settings dialog
 - [x] Icon themes (light/dark)
+- [x] Logging
 - [ ] Keyboard shortcuts
-- [ ] Logging
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
 ## Requirements
@@ -101,8 +101,19 @@ Right-click → Settings to configure:
 - Default VPN connection
 - Icon theme
 - Monitor mode (Netlink/Polling)
+- Log level
 
 Configuration is stored in `~/.config/wgtray/config.json`.
+
+Logs are stored in `~/.local/share/wgtray/wgtray.log`.
+
+### Troubleshooting
+
+For debug output, run:
+
+```bash
+wgtray --debug
+```
 
 ## Contributing
 
