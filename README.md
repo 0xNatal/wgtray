@@ -30,6 +30,8 @@
 - Quick switch between VPN configurations
 - Visual status indicator (connected/disconnected)
 - Real-time status updates via Netlink
+- Settings dialog with customization options
+- Auto-connect on startup
 - Uses standard `/etc/wireguard` configs
 - Polkit integration for secure authentication
 - Desktop notifications
@@ -42,6 +44,7 @@
 - [x] Left-click quick action
 - [x] About dialog
 - [x] Real-time status updates (Netlink)
+- [x] Settings dialog
 - [ ] Keyboard shortcuts
 - [ ] Logging
 - [ ] Icon themes (light/dark)
@@ -83,12 +86,23 @@ sudo make install
 wgtray
 ```
 
-The app starts minimized in the system tray. 
+The app starts minimized in the system tray.
 
 - **Left-click**: Toggle last used connection
 - **Right-click**: Open menu with all configurations
 
-wgtray auto-starts on login. To disable, remove `/etc/xdg/autostart/wgtray.desktop`.
+### Settings
+
+Right-click → Settings to configure:
+
+- Autostart on login
+- Desktop notifications
+- Auto-connect on startup
+- Default VPN connection
+- Icon theme
+- Monitor mode (Netlink/Polling)
+
+Configuration is stored in `~/.config/wgtray/config.json`.
 
 ## Contributing
 
