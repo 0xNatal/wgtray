@@ -1,3 +1,24 @@
+## [1.3.0] - 2026-02-01
+
+### 🚀 Features
+
+- Add logging with --debug flag
+- Add logging and restructure settings dialog
+- Show connection stats (traffic, handshake) in tooltip
+- Add Python-based hook system
+- Add hook system and optional password authentication
+
+### 🐛 Bug Fixes
+
+- Show correct logo
+
+### 🚜 Refactor
+
+- Move log path and refresh to settings dialog
+
+### 📚 Documentation
+
+- Update roadmap with new planned features
 ## [1.2.0] - 2026-02-01
 
 ### 🚀 Features
@@ -8,6 +29,10 @@
 
 - Stop running process before uninstall/upgrade
 - Settings dialog icon path for new theme structure
+
+### 💼 Other
+
+- V1.2.0
 
 ### 📚 Documentation
 
