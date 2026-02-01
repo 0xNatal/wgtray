@@ -1,3 +1,7 @@
+pre_remove() {
+    pkill -f "python3 -m wgtray" 2>/dev/null || true
+}
+
 post_install() {
     echo ""
     cat /usr/share/doc/wgtray/ascii-logo.txt 2>/dev/null || true
@@ -11,6 +15,10 @@ post_install() {
 
 post_upgrade() {
     post_install
+}
+
+pre_upgrade() {
+    pre_remove
 }
 
 post_remove() {
