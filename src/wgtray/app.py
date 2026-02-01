@@ -24,31 +24,29 @@ def detect_system_theme():
         if app:
             palette = app.palette()
             bg = palette.window().color()
-            # If background is dark, we need light icons
             is_dark_bg = bg.lightness() < 128
             return "light" if is_dark_bg else "dark"
     except Exception:
         pass
-    return "dark"  # Default fallback
+    return "dark"
 
 
 def get_icon(name, theme="auto"):
     """Get icon by name, respecting theme."""
     if theme == "auto":
         theme = detect_system_theme()
-    
+
     icon_variants = ICONS.get(name, ICONS["disconnected"])
     icon_file = icon_variants.get(theme, icon_variants.get("dark"))
     icon_path = ICONDIR / icon_file
-    
-    # Fallback to dark theme if light icon doesn't exist
+
     if not icon_path.exists() and theme == "light":
         icon_file = icon_variants.get("dark")
         icon_path = ICONDIR / icon_file
-    
+
     if icon_path.exists():
         return QIcon(str(icon_path))
-    
+
     print(f"Warning: Icon not found: {icon_path}", file=sys.stderr)
     return QIcon()
 
@@ -59,13 +57,13 @@ class WgTray:
         self.app = QApplication(sys.argv)
         self.app.setQuitOnLastWindowClosed(False)
         self.app.setApplicationName("wgtray")
-        
+        self.app.setDesktopFileName("wgtray")
+
         self._config = load_config()
-        
-        # Setup logging
+
         setup_logging(debug=self._debug)
         logger.info(f"wgtray {VERSION} starting")
-        
+
         self.app.setWindowIcon(get_icon("disconnected", self._config.get("icon_theme", "auto")))
 
         check_config_dir_permissions()
@@ -82,14 +80,12 @@ class WgTray:
         self.menu.aboutToShow.connect(self.build_menu)
         self.tray.activated.connect(self.on_tray_click)
 
-        # Setup monitoring based on config
         self._setup_monitoring()
 
         self.update_icon()
         self.build_menu()
         self.tray.setVisible(True)
 
-        # Auto-connect if enabled
         if self._config.get("autoconnect", False):
             QTimer.singleShot(1000, self._auto_connect)
 
@@ -112,12 +108,10 @@ class WgTray:
         if mode == "netlink" and not use_netlink:
             print("Warning: Netlink requested but not available, falling back to polling", file=sys.stderr)
 
-        # Polling as fallback or if explicitly configured
         if not use_netlink or mode == "polling":
             interval = self._config.get("poll_interval", 3000)
             self.poll_timer.start(interval)
         else:
-            # Slower poll as backup even with netlink
             self.poll_timer.start(5000)
 
         self._monitor_mode = "netlink" if use_netlink else "polling"
@@ -127,7 +121,7 @@ class WgTray:
         """Auto-connect to default or last VPN."""
         active = get_active_connections()
         if active:
-            return  # Already connected
+            return
 
         configs = get_configs()
         if not configs:
@@ -183,14 +177,12 @@ class WgTray:
         active = self._cache_active
         configs = self._cache_configs
 
-        # Status
         status_text = f"Connected ({', '.join(active)})" if active else "Not connected"
         status = QAction(f"Status: {status_text}", self.menu)
         status.setEnabled(False)
         self.menu.addAction(status)
         self.menu.addSeparator()
 
-        # VPN list
         if configs:
             for name in configs:
                 if name in active:
@@ -213,7 +205,6 @@ class WgTray:
             self.menu.addAction(disc)
             self.menu.addSeparator()
 
-        # Actions
         folder = QAction("Open config folder", self.menu)
         folder.triggered.connect(open_config_folder)
         self.menu.addAction(folder)
@@ -224,9 +215,7 @@ class WgTray:
         settings.triggered.connect(self.on_settings)
         self.menu.addAction(settings)
 
-        about = QAction("About", self.menu)
-        about.triggered.connect(self.on_about)
-        self.menu.addAction(about)
+        self.menu.addSeparator()
 
         quit_action = QAction("Quit", self.menu)
         quit_action.triggered.connect(self.quit)
@@ -292,8 +281,9 @@ class WgTray:
         self.update_icon()
 
     def on_settings(self):
-        dialog = SettingsDialog(self._config, self._cache_configs)
+        dialog = SettingsDialog(self._config, self._cache_configs, self._monitor_mode)
         dialog.refresh_clicked.connect(self.on_refresh)
+        dialog.about_clicked.connect(self.on_about)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             old_mode = self._config.get("monitor_mode")
             old_interval = self._config.get("poll_interval")
@@ -302,7 +292,6 @@ class WgTray:
             save_config(self._config)
             logger.info("Settings saved")
 
-            # Restart monitoring if settings changed
             if (self._config.get("monitor_mode") != old_mode or
                 self._config.get("poll_interval") != old_interval):
                 self._restart_monitoring()
@@ -323,7 +312,6 @@ class WgTray:
             f"<h3>wgtray</h3>"
             f"<p>Version {VERSION}</p>"
             f"<p>A lightweight WireGuard system tray client for Linux.</p>"
-            f"<p>Monitor: {self._monitor_mode.capitalize()}</p>"
             f"<p><a href='https://github.com/0xNatal/wgtray'>github.com/0xNatal/wgtray</a></p>"
             f"<p>License: GPL-3.0</p>"
         )

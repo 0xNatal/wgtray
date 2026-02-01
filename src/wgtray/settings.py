@@ -3,7 +3,7 @@
 from PyQt6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel,
     QCheckBox, QComboBox, QPushButton, QGroupBox,
-    QSpinBox
+    QSpinBox, QStyle
 )
 from PyQt6.QtCore import Qt, pyqtSignal
 from .config import is_autostart_enabled, set_autostart
@@ -12,10 +12,13 @@ from .logger import get_log_path
 
 class SettingsDialog(QDialog):
     refresh_clicked = pyqtSignal()
-    def __init__(self, config, configs_list, parent=None):
+    about_clicked = pyqtSignal()
+
+    def __init__(self, config, configs_list, monitor_mode="unknown", parent=None):
         super().__init__(parent)
         self.config = config.copy()
         self.configs_list = configs_list
+        self.monitor_mode = monitor_mode
 
         self.setWindowTitle("wgtray Settings")
         self.setMinimumWidth(400)
@@ -65,7 +68,7 @@ class SettingsDialog(QDialog):
         theme_layout = QHBoxLayout()
         theme_layout.addWidget(QLabel("Icon theme:"))
         self.theme_combo = QComboBox()
-        self.theme_combo.addItem("Auto (follow system)", "auto")
+        self.theme_combo.addItem("Auto", "auto")
         self.theme_combo.addItem("Dark", "dark")
         self.theme_combo.addItem("Light", "light")
         idx = self.theme_combo.findData(self.config.get("icon_theme", "auto"))
@@ -83,8 +86,8 @@ class SettingsDialog(QDialog):
         monitor_layout = QHBoxLayout()
         monitor_layout.addWidget(QLabel("Monitor mode:"))
         self.monitor_combo = QComboBox()
-        self.monitor_combo.addItem("Auto (Netlink if available)", "auto")
-        self.monitor_combo.addItem("Netlink (real-time)", "netlink")
+        self.monitor_combo.addItem("Auto", "auto")
+        self.monitor_combo.addItem("Netlink", "netlink")
         self.monitor_combo.addItem("Polling", "polling")
         idx = self.monitor_combo.findData(self.config.get("monitor_mode", "auto"))
         if idx >= 0:
@@ -102,29 +105,45 @@ class SettingsDialog(QDialog):
         poll_layout.addStretch()
         adv_layout.addLayout(poll_layout)
 
+        layout.addWidget(adv_group)
+
+        # === Info ===
+        info_group = QGroupBox("Info")
+        info_layout = QVBoxLayout(info_group)
+
+        mode_layout = QHBoxLayout()
+        mode_layout.addWidget(QLabel("Active monitor:"))
+        mode_layout.addWidget(QLabel(f"<b>{self.monitor_mode.capitalize()}</b>"))
+        mode_layout.addStretch()
+        info_layout.addLayout(mode_layout)
+
         log_layout = QHBoxLayout()
         log_layout.addWidget(QLabel("Log file:"))
         log_path = QLabel(f"<a href='file://{get_log_path()}'>{get_log_path()}</a>")
         log_path.setOpenExternalLinks(True)
         log_path.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         log_layout.addWidget(log_path, 1)
-        adv_layout.addLayout(log_layout)
+        info_layout.addLayout(log_layout)
 
-        layout.addWidget(adv_group)
+        layout.addWidget(info_group)
 
         # === Buttons ===
         layout.addStretch()
         btn_layout = QHBoxLayout()
-        
-        refresh_btn = QPushButton("Refresh")
+
+        about_btn = QPushButton()
+        about_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MessageBoxInformation))
+        about_btn.setToolTip("About")
+        about_btn.clicked.connect(self.about_clicked.emit)
+        btn_layout.addWidget(about_btn)
+
+        refresh_btn = QPushButton()
+        refresh_btn.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_BrowserReload))
+        refresh_btn.setToolTip("Refresh")
         refresh_btn.clicked.connect(self.refresh_clicked.emit)
         btn_layout.addWidget(refresh_btn)
-        
-        btn_layout.addStretch()
 
-        cancel_btn = QPushButton("Cancel")
-        cancel_btn.clicked.connect(self.reject)
-        btn_layout.addWidget(cancel_btn)
+        btn_layout.addStretch()
 
         save_btn = QPushButton("Save")
         save_btn.clicked.connect(self.accept)
