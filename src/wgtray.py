@@ -182,21 +182,26 @@ class WgTray:
         active = self._cache_active
         configs = self._cache_configs
 
+        # Status header
         if active:
-            status = QAction(f"Connected: {', '.join(active)}", self.menu)
+            status = QAction(f"Status: Connected ({', '.join(active)})", self.menu)
+            status.setEnabled(False)
+            self.menu.addAction(status)
         else:
-            status = QAction("Not connected", self.menu)
-        status.setEnabled(False)
-        self.menu.addAction(status)
+            status = QAction("Status: Not connected", self.menu)
+            status.setEnabled(False)
+            self.menu.addAction(status)
+
         self.menu.addSeparator()
 
+        # VPN configs
         if configs:
             for name in configs:
                 if name in active:
-                    action = QAction(f"● {name}", self.menu)
+                    action = QAction(f"✓ {name}", self.menu)
                     action.triggered.connect(lambda checked, n=name: self.on_disconnect(n))
                 else:
-                    action = QAction(name, self.menu)
+                    action = QAction(f"   {name}", self.menu)
                     action.triggered.connect(lambda checked, n=name: self.on_connect(n))
                 self.menu.addAction(action)
         else:
