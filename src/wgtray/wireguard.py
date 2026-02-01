@@ -6,6 +6,8 @@ import os
 import time
 from pathlib import Path
 from .constants import LIBDIR
+from .hooks import run_hook, ensure_hooks_dir
+from .logger import logger
 
 
 def run_script(script_name, *args, use_pkexec=False):
@@ -44,13 +46,7 @@ def get_configs():
 
 
 def get_connection_stats(interface):
-    """Get connection stats for a WireGuard interface.
-    
-    Returns dict with:
-        - rx_bytes: bytes received
-        - tx_bytes: bytes sent
-        - latest_handshake: seconds since last handshake (or None)
-    """
+    """Get connection stats for a WireGuard interface."""
     output, code = run_script("stats.sh", interface, use_pkexec=True)
     if code != 0 or not output:
         return None
@@ -98,18 +94,50 @@ def format_handshake(timestamp):
 
 
 def connect(name):
-    """Connect to a WireGuard VPN."""
+    """Connect to a WireGuard VPN.
+    
+    Returns:
+        Tuple of (success, hook_error) where hook_error is None or error message
+    """
+    ensure_hooks_dir()
+    
     _, code = run_script("connect.sh", name, use_pkexec=True)
-    return code == 0
+    
+    if code == 0:
+        hook_ok, hook_err = run_hook(name, "post-connect")
+        if not hook_ok:
+            logger.warning(f"Post-connect hook failed for {name}: {hook_err}")
+        return True, hook_err if not hook_ok else None
+    
+    return False, None
 
 
 def disconnect(name=None):
-    """Disconnect from WireGuard VPN(s)."""
+    """Disconnect from WireGuard VPN(s).
+    
+    Returns:
+        Tuple of (success, hook_error) where hook_error is None or error message
+    """
+    ensure_hooks_dir()
+    hook_errors = []
+    
     if name:
+        hook_ok, hook_err = run_hook(name, "pre-disconnect")
+        if not hook_ok:
+            hook_errors.append(f"{name}: {hook_err}")
+        
         _, code = run_script("disconnect.sh", name, use_pkexec=True)
     else:
+        active = get_active_connections()
+        for iface in active:
+            hook_ok, hook_err = run_hook(iface, "pre-disconnect")
+            if not hook_ok:
+                hook_errors.append(f"{iface}: {hook_err}")
+        
         _, code = run_script("disconnect.sh", use_pkexec=True)
-    return code == 0
+    
+    hook_error = "; ".join(hook_errors) if hook_errors else None
+    return code == 0, hook_error
 
 
 def check_config_dir_permissions():

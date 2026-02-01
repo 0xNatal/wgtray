@@ -31,6 +31,7 @@
 - Visual status indicator (connected/disconnected)
 - Connection stats (traffic, last handshake)
 - Real-time status updates via Netlink
+- Hooks for post-connect/pre-disconnect scripts
 - Settings dialog with customization options
 - Auto-connect on startup
 - Uses standard `/etc/wireguard` configs
@@ -49,6 +50,7 @@
 - [x] Icon themes (light/dark)
 - [x] Logging
 - [x] Connection stats (traffic, handshake)
+- [x] Hooks (post-connect, pre-disconnect)
 - [ ] CLI flags
 - [ ] Peer status
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
@@ -65,14 +67,12 @@
 ## Installation
 
 ### AUR (recommended)
-
 ```bash
 paru -S wgtray
 # or: yay -S wgtray
 ```
 
 ### Manual
-
 ```bash
 # Install dependencies
 sudo pacman -S python-pyqt6 python-pyroute2 wireguard-tools polkit qt6-svg
@@ -84,7 +84,6 @@ sudo make install
 ```
 
 ## Usage
-
 ```bash
 wgtray
 ```
@@ -104,16 +103,48 @@ Right-click → Settings to configure:
 - Default VPN connection
 - Icon theme
 - Monitor mode (Netlink/Polling)
-- Log level
+- Poll interval
 
 Configuration is stored in `~/.config/wgtray/config.json`.
 
 Logs are stored in `~/.local/share/wgtray/wgtray.log`.
 
+### Hooks
+
+Run custom scripts when connecting/disconnecting VPNs. Hooks run as your user (not root).
+
+Create executable scripts in `~/.config/wgtray/hooks/`:
+```bash
+# Example: Notify after connecting to wg0
+~/.config/wgtray/hooks/wg0.post-connect
+
+# Example: Cleanup before disconnecting
+~/.config/wgtray/hooks/wg0.pre-disconnect
+```
+
+**Hook naming:** `<interface>.<event>`
+
+| Event | When |
+|-------|------|
+| `post-connect` | After successful connection |
+| `pre-disconnect` | Before disconnecting |
+
+**Environment variables available in hooks:**
+- `WGTRAY_INTERFACE` – Interface name (e.g., `wg0`)
+- `WGTRAY_EVENT` – Event type (`post-connect` or `pre-disconnect`)
+
+**Example hook:**
+```bash
+#!/bin/bash
+# ~/.config/wgtray/hooks/wg0.post-connect
+notify-send "Connected to $WGTRAY_INTERFACE"
+```
+
+Make executable: `chmod +x ~/.config/wgtray/hooks/wg0.post-connect`
+
 ### Troubleshooting
 
 For debug output, run:
-
 ```bash
 wgtray --debug
 ```

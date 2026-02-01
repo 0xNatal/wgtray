@@ -16,7 +16,9 @@ def find_icondir():
 
 LIBDIR = find_libdir()
 ICONDIR = find_icondir()
-CONFIG_FILE = Path.home() / ".config" / "wgtray" / "config.json"
+CONFIG_DIR = Path.home() / ".config" / "wgtray"
+CONFIG_FILE = CONFIG_DIR / "config.json"
+HOOKS_DIR = CONFIG_DIR / "hooks"
 AUTOSTART_FILE = Path.home() / ".config" / "autostart" / "wgtray.desktop"
 SYSTEM_DESKTOP = Path("/usr/share/applications/wgtray.desktop")
 
@@ -36,7 +38,7 @@ DEFAULT_CONFIG = {
     "autoconnect": False,
     "default_connection": "",
     "last_connection": "",
-    "icon_theme": "auto",  # auto, light, dark
-    "monitor_mode": "auto",  # auto, netlink, polling
-    "poll_interval": 5000,  # ms (for stats updates)
+    "icon_theme": "auto",
+    "monitor_mode": "auto",
+    "poll_interval": 5000,
 }

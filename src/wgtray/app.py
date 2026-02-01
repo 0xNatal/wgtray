@@ -265,9 +265,14 @@ class WgTray:
             disconnect(conn)
 
         logger.info(f"Connecting to {name}")
-        if connect(name):
+        success, hook_error = connect(name)
+
+        if success:
             logger.info(f"Connected to {name}")
-            self.show_notification("WireGuard", f"Connected to {name}")
+            msg = f"Connected to {name}"
+            if hook_error:
+                msg += f"\n⚠ Hook failed: {hook_error}"
+            self.show_notification("WireGuard", msg, error=bool(hook_error))
             self._config["last_connection"] = name
             save_config(self._config)
         else:
@@ -277,9 +282,14 @@ class WgTray:
 
     def on_disconnect(self, name):
         logger.info(f"Disconnecting from {name}")
-        if disconnect(name):
+        success, hook_error = disconnect(name)
+
+        if success:
             logger.info(f"Disconnected from {name}")
-            self.show_notification("WireGuard", f"Disconnected from {name}")
+            msg = f"Disconnected from {name}"
+            if hook_error:
+                msg += f"\n⚠ Hook failed: {hook_error}"
+            self.show_notification("WireGuard", msg, error=bool(hook_error))
         else:
             logger.error(f"Failed to disconnect from {name}")
             self.show_notification("WireGuard", f"Failed to disconnect from {name}", error=True)
@@ -287,9 +297,14 @@ class WgTray:
 
     def on_disconnect_all(self):
         logger.info("Disconnecting all")
-        if disconnect():
+        success, hook_error = disconnect()
+
+        if success:
             logger.info("All connections closed")
-            self.show_notification("WireGuard", "All connections closed")
+            msg = "All connections closed"
+            if hook_error:
+                msg += f"\n⚠ Hook failed: {hook_error}"
+            self.show_notification("WireGuard", msg, error=bool(hook_error))
         else:
             logger.error("Failed to disconnect")
             self.show_notification("WireGuard", "Failed to disconnect", error=True)
