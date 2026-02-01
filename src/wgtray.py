@@ -6,6 +6,7 @@ import signal
 import subprocess
 import os
 import time
+import json
 from pathlib import Path
 from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu
 from PyQt6.QtGui import QIcon, QAction
@@ -31,6 +32,23 @@ def find_icondir():
 
 LIBDIR = find_libdir()
 ICONDIR = find_icondir()
+CONFIG_FILE = Path.home() / ".config" / "wgtray" / "config.json"
+
+
+def load_config():
+    if CONFIG_FILE.exists():
+        try:
+            with open(CONFIG_FILE) as f:
+                return json.load(f)
+        except (json.JSONDecodeError, IOError):
+            pass
+    return {}
+
+
+def save_config(config):
+    CONFIG_FILE.parent.mkdir(parents=True, exist_ok=True)
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(config, f, indent=2)
 
 ICONS = {
     "tray-disconnected": "wgtray.svg",
@@ -123,6 +141,10 @@ class WgTray:
         self._cache_time = 0
         self._cache_ttl = 2  # Avoid repeated subprocess calls on rapid menu opens
 
+        self._config = load_config()
+
+        self.tray.activated.connect(self.on_tray_click)
+
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_icon)
         self.timer.start(30000)
@@ -204,6 +226,23 @@ class WgTray:
         quit_action.triggered.connect(self.app.quit)
         self.menu.addAction(quit_action)
 
+    def on_tray_click(self, reason):
+        if reason == QSystemTrayIcon.ActivationReason.Trigger:
+            active = get_active_connections()
+            if active:
+                # Connected -> disconnect
+                self.on_disconnect(active[0])
+            else:
+                # Not connected -> connect to last or first
+                configs = get_configs()
+                if not configs:
+                    return
+                last = self._config.get("last_connection")
+                if last and last in configs:
+                    self.on_connect(last)
+                else:
+                    self.on_connect(configs[0])
+
     def on_connect(self, name):
         active = get_active_connections()
 
@@ -217,6 +256,8 @@ class WgTray:
 
         if connect(name):
             self.show_notification("WireGuard", f"Connected to {name}")
+            self._config["last_connection"] = name
+            save_config(self._config)
         else:
             self.show_notification("WireGuard", f"Failed to connect to {name}", error=True)
 
