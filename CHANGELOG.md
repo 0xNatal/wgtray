@@ -1,8 +1,34 @@
+## [1.1.0] - 2026-02-01
+
+### 🚀 Features
+
+- Add left-click toggle and config file for last connection
+- Add about dialog
+- [**breaking**] Restructure as package, add settings and netlink monitoring
+
+### 📚 Documentation
+
+- Add AUR badge
+- Remove connection timer (not useful with 30s refresh)
+- Add settings documentation to readme
+
+### 🎨 Styling
+
+- Remove dot from tray icon
+- Improve menu layout with checkmark for active connection
+
+### ⚙️ Miscellaneous Tasks
+
+- Update release script for new package structure
 ## [1.0.2] - 2026-01-31
 
 ### 🚀 Features
 
 - Add post-upgrade message
+
+### 💼 Other
+
+- V1.0.2
 ## [1.0.1] - 2026-01-31
 
 ### 🚀 Features
