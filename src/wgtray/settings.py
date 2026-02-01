@@ -17,7 +17,7 @@ class SettingsDialog(QDialog):
         self.configs_list = configs_list
 
         self.setWindowTitle("wgtray Settings")
-        self.setWindowIcon(QIcon(str(ICONDIR / ICONS["disconnected"])))
+        self.setWindowIcon(QIcon(str(ICONDIR / ICONS["disconnected"]["dark"])))
         self.setMinimumWidth(400)
 
         layout = QVBoxLayout(self)
