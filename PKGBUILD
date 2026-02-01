@@ -1,6 +1,6 @@
 # Maintainer: Natal Bumann wgtray@rcklt.ch
 pkgname=wgtray
-pkgver=1.1.0
+pkgver=1.1.1
 pkgrel=1
 pkgdesc="WireGuard system tray client for easy VPN switching"
 arch=('any')

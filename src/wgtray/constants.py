@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-VERSION = "1.1.0"
+VERSION = "1.1.1"
 
 def find_libdir():
     system_path = Path("/usr/share/wgtray/lib")

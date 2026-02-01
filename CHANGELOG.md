@@ -1,3 +1,8 @@
+## [1.1.1] - 2026-02-01
+
+### 🚀 Features
+
+- Show ascii logo on installation
 ## [1.1.0] - 2026-02-01
 
 ### 🚀 Features
@@ -5,6 +10,10 @@
 - Add left-click toggle and config file for last connection
 - Add about dialog
 - [**breaking**] Restructure as package, add settings and netlink monitoring
+
+### 💼 Other
+
+- V1.1.0
 
 ### 📚 Documentation
 
