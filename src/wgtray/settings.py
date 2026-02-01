@@ -5,9 +5,7 @@ from PyQt6.QtWidgets import (
     QCheckBox, QComboBox, QPushButton, QGroupBox,
     QSpinBox
 )
-from PyQt6.QtGui import QIcon
 from .config import is_autostart_enabled, set_autostart
-from .constants import ICONDIR, ICONS
 
 
 class SettingsDialog(QDialog):
@@ -17,7 +15,6 @@ class SettingsDialog(QDialog):
         self.configs_list = configs_list
 
         self.setWindowTitle("wgtray Settings")
-        self.setWindowIcon(QIcon(str(ICONDIR / ICONS["disconnected"]["dark"])))
         self.setMinimumWidth(400)
 
         layout = QVBoxLayout(self)
