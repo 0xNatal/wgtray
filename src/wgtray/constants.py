@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-VERSION = "1.0.3"
+VERSION = "1.0.4"
 
 def find_libdir():
     system_path = Path("/usr/share/wgtray/lib")
@@ -41,4 +41,5 @@ DEFAULT_CONFIG = {
     "icon_theme": "auto",
     "monitor_mode": "auto",
     "poll_interval": 5000,
+    "require_password": True,
 }

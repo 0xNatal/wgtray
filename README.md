@@ -31,9 +31,10 @@
 - Visual status indicator (connected/disconnected)
 - Connection stats (traffic, last handshake)
 - Real-time status updates via Netlink
-- Hooks for post-connect/pre-disconnect scripts
+- Hooks for pre-connect/post-connect/pre-disconnect scripts
 - Settings dialog with customization options
 - Auto-connect on startup
+- Optional password authentication
 - Uses standard `/etc/wireguard` configs
 - Polkit integration for secure authentication
 - Desktop notifications
@@ -50,7 +51,8 @@
 - [x] Icon themes (light/dark)
 - [x] Logging
 - [x] Connection stats (traffic, handshake)
-- [x] Hooks (post-connect, pre-disconnect)
+- [x] Hooks (pre-connect, post-connect, pre-disconnect)
+- [x] Optional password requirement
 - [ ] CLI flags
 - [ ] Peer status
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
@@ -100,6 +102,7 @@ Right-click → Settings to configure:
 - Autostart on login
 - Desktop notifications
 - Auto-connect on startup
+- Require password
 - Default VPN connection
 - Icon theme
 - Monitor mode (Netlink/Polling)
@@ -115,23 +118,22 @@ Run custom scripts when connecting/disconnecting VPNs. Hooks run as your user (n
 
 Create executable scripts in `~/.config/wgtray/hooks/`:
 ```bash
-# Example: Notify after connecting to wg0
-~/.config/wgtray/hooks/wg0.post-connect
-
-# Example: Cleanup before disconnecting
-~/.config/wgtray/hooks/wg0.pre-disconnect
+~/.config/wgtray/hooks/wg0.pre-connect      # Before connecting
+~/.config/wgtray/hooks/wg0.post-connect     # After connecting
+~/.config/wgtray/hooks/wg0.pre-disconnect   # Before disconnecting
 ```
 
 **Hook naming:** `<interface>.<event>`
 
 | Event | When |
 |-------|------|
+| `pre-connect` | Before connecting (after authentication) |
 | `post-connect` | After successful connection |
-| `pre-disconnect` | Before disconnecting |
+| `pre-disconnect` | Before disconnecting (after authentication) |
 
 **Environment variables available in hooks:**
 - `WGTRAY_INTERFACE` – Interface name (e.g., `wg0`)
-- `WGTRAY_EVENT` – Event type (`post-connect` or `pre-disconnect`)
+- `WGTRAY_EVENT` – Event type (`pre-connect`, `post-connect`, or `pre-disconnect`)
 
 **Example hook:**
 ```bash

@@ -49,6 +49,10 @@ class SettingsDialog(QDialog):
         self.autoconnect_cb.setChecked(self.config.get("autoconnect", False))
         conn_layout.addWidget(self.autoconnect_cb)
 
+        self.require_password_cb = QCheckBox("Require password")
+        self.require_password_cb.setChecked(self.config.get("require_password", True))
+        conn_layout.addWidget(self.require_password_cb)
+
         default_layout = QHBoxLayout()
         default_layout.addWidget(QLabel("Default VPN:"))
         self.default_combo = QComboBox()
@@ -171,6 +175,7 @@ class SettingsDialog(QDialog):
             **self.config,
             "notifications": self.notifications_cb.isChecked(),
             "autoconnect": self.autoconnect_cb.isChecked(),
+            "require_password": self.require_password_cb.isChecked(),
             "default_connection": self.default_combo.currentData(),
             "icon_theme": self.theme_combo.currentData(),
             "monitor_mode": self.monitor_combo.currentData(),

@@ -1,7 +1,6 @@
 #!/bin/bash
 # Disconnect from WireGuard VPN
 # Usage: disconnect.sh [config-name]
-# Without argument: Disconnect all active connections
 
 CONFIG_NAME="$1"
 

@@ -65,8 +65,6 @@ class WgTray:
         setup_logging(debug=self._debug)
         logger.info(f"wgtray {VERSION} starting")
 
-        self.app.setWindowIcon(get_icon("disconnected", self._config.get("icon_theme", "auto")))
-
         check_config_dir_permissions()
 
         self._cache_active = []
@@ -109,7 +107,6 @@ class WgTray:
         if mode == "netlink" and not use_netlink:
             print("Warning: Netlink requested but not available, falling back to polling", file=sys.stderr)
 
-        # Always run poll timer for stats updates
         interval = self._config.get("poll_interval", 3000)
         self.poll_timer.start(interval)
 
@@ -139,7 +136,6 @@ class WgTray:
             self._last_state = state
             self.update_icon()
         elif active:
-            # Update tooltip with fresh stats only when connected
             self._update_tooltip(active)
 
     def on_network_change(self):
@@ -186,7 +182,8 @@ class WgTray:
             self.tray.setIcon(get_icon("connected", theme))
         else:
             self.tray.setIcon(get_icon("disconnected", theme))
-        
+
+        self.app.setWindowIcon(get_icon("disconnected", theme))
         self._update_tooltip(active)
 
     def build_menu(self):
@@ -262,10 +259,14 @@ class WgTray:
             return
 
         for conn in active:
-            disconnect(conn)
+            disconnect(conn, require_password=False)
 
         logger.info(f"Connecting to {name}")
-        success, hook_error = connect(name)
+        require_pw = self._config.get("require_password", True)
+        success, hook_error, cancelled = connect(name, require_password=require_pw)
+
+        if cancelled:
+            return
 
         if success:
             logger.info(f"Connected to {name}")
@@ -282,7 +283,11 @@ class WgTray:
 
     def on_disconnect(self, name):
         logger.info(f"Disconnecting from {name}")
-        success, hook_error = disconnect(name)
+        require_pw = self._config.get("require_password", True)
+        success, hook_error, cancelled = disconnect(name, require_password=require_pw)
+
+        if cancelled:
+            return
 
         if success:
             logger.info(f"Disconnected from {name}")
@@ -297,7 +302,11 @@ class WgTray:
 
     def on_disconnect_all(self):
         logger.info("Disconnecting all")
-        success, hook_error = disconnect()
+        require_pw = self._config.get("require_password", True)
+        success, hook_error, cancelled = disconnect(require_password=require_pw)
+
+        if cancelled:
+            return
 
         if success:
             logger.info("All connections closed")

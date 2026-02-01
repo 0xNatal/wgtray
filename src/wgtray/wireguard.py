@@ -5,8 +5,8 @@ import sys
 import os
 import time
 from pathlib import Path
-from .constants import LIBDIR
-from .hooks import run_hook, ensure_hooks_dir
+from .constants import LIBDIR, HOOKS_DIR
+from .hooks import run_hook
 from .logger import logger
 
 
@@ -27,6 +27,37 @@ def run_script(script_name, *args, use_pkexec=False):
         return "Timeout", 1
     except Exception as e:
         return str(e), 1
+
+
+def authenticate() -> bool:
+    """Trigger pkexec authentication.
+    
+    Returns:
+        True if authentication succeeded, False if cancelled/failed.
+    """
+    auth_script = LIBDIR / "auth.sh"
+    if not auth_script.exists():
+        logger.warning(f"Auth script not found: {auth_script}")
+        return True
+    
+    try:
+        result = subprocess.run(
+            ["pkexec", str(auth_script)],
+            capture_output=True,
+            timeout=60
+        )
+        return result.returncode == 0
+    except subprocess.TimeoutExpired:
+        logger.error("Authentication timed out")
+        return False
+    except Exception as e:
+        logger.error(f"Authentication error: {e}")
+        return False
+
+
+def ensure_hooks_dir():
+    """Create hooks directory if it doesn't exist."""
+    HOOKS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def get_active_connections():
@@ -93,51 +124,72 @@ def format_handshake(timestamp):
         return f"{diff // 86400}d ago"
 
 
-def connect(name):
+def connect(name, require_password=True):
     """Connect to a WireGuard VPN.
     
     Returns:
-        Tuple of (success, hook_error) where hook_error is None or error message
+        Tuple of (success, hook_error, cancelled)
     """
     ensure_hooks_dir()
     
+    # Authenticate if required
+    if require_password:
+        if not authenticate():
+            logger.info("Authentication cancelled")
+            return False, None, True
+    
+    # Pre-connect hook
+    hook_ok, hook_err = run_hook(name, "pre-connect")
+    if not hook_ok:
+        logger.warning(f"Pre-connect hook failed for {name}: {hook_err}")
+    
+    # Connect
     _, code = run_script("connect.sh", name, use_pkexec=True)
     
     if code == 0:
+        # Post-connect hook
         hook_ok, hook_err = run_hook(name, "post-connect")
         if not hook_ok:
             logger.warning(f"Post-connect hook failed for {name}: {hook_err}")
-        return True, hook_err if not hook_ok else None
+        return True, hook_err if not hook_ok else None, False
     
-    return False, None
+    return False, None, False
 
 
-def disconnect(name=None):
+def disconnect(name=None, require_password=True):
     """Disconnect from WireGuard VPN(s).
     
     Returns:
-        Tuple of (success, hook_error) where hook_error is None or error message
+        Tuple of (success, hook_error, cancelled)
     """
     ensure_hooks_dir()
     hook_errors = []
     
-    if name:
-        hook_ok, hook_err = run_hook(name, "pre-disconnect")
+    # Get interfaces
+    interfaces = [name] if name else get_active_connections()
+    if not interfaces:
+        return True, None, False
+    
+    # Authenticate if required
+    if require_password:
+        if not authenticate():
+            logger.info("Authentication cancelled")
+            return False, None, True
+    
+    # Pre-disconnect hooks
+    for iface in interfaces:
+        hook_ok, hook_err = run_hook(iface, "pre-disconnect")
         if not hook_ok:
-            hook_errors.append(f"{name}: {hook_err}")
-        
+            hook_errors.append(f"{iface}: {hook_err}")
+    
+    # Disconnect
+    if name:
         _, code = run_script("disconnect.sh", name, use_pkexec=True)
     else:
-        active = get_active_connections()
-        for iface in active:
-            hook_ok, hook_err = run_hook(iface, "pre-disconnect")
-            if not hook_ok:
-                hook_errors.append(f"{iface}: {hook_err}")
-        
         _, code = run_script("disconnect.sh", use_pkexec=True)
     
     hook_error = "; ".join(hook_errors) if hook_errors else None
-    return code == 0, hook_error
+    return code == 0, hook_error, False
 
 
 def check_config_dir_permissions():

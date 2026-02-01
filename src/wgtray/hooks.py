@@ -23,7 +23,7 @@ def run_hook(interface: str, event: str) -> tuple[bool, str | None]:
     
     Args:
         interface: WireGuard interface name (e.g., 'wg0')
-        event: Hook event ('post-connect' or 'pre-disconnect')
+        event: Hook event ('pre-connect', 'post-connect', 'pre-disconnect')
     
     Returns:
         Tuple of (success, error_message)

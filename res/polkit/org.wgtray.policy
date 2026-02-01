@@ -6,13 +6,25 @@
   <vendor>wgtray</vendor>
   <vendor_url>https://github.com/0xNatal/wgtray</vendor_url>
 
-  <action id="org.wgtray.pkexec.connect">
-    <description>Connect to WireGuard VPN</description>
-    <message>Authentication required to connect VPN</message>
+  <action id="org.wgtray.pkexec.auth">
+    <description>Authenticate for WireGuard operations</description>
+    <message>Authentication required for VPN operation</message>
     <defaults>
       <allow_any>auth_admin</allow_any>
       <allow_inactive>auth_admin</allow_inactive>
       <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/share/wgtray/lib/auth.sh</annotate>
+    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+  </action>
+
+  <action id="org.wgtray.pkexec.connect">
+    <description>Connect to WireGuard VPN</description>
+    <message>Connecting to VPN</message>
+    <defaults>
+      <allow_any>yes</allow_any>
+      <allow_inactive>yes</allow_inactive>
+      <allow_active>yes</allow_active>
     </defaults>
     <annotate key="org.freedesktop.policykit.exec.path">/usr/share/wgtray/lib/connect.sh</annotate>
     <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
@@ -20,11 +32,11 @@
 
   <action id="org.wgtray.pkexec.disconnect">
     <description>Disconnect from WireGuard VPN</description>
-    <message>Authentication required to disconnect VPN</message>
+    <message>Disconnecting from VPN</message>
     <defaults>
-      <allow_any>auth_admin</allow_any>
-      <allow_inactive>auth_admin</allow_inactive>
-      <allow_active>auth_admin_keep</allow_active>
+      <allow_any>yes</allow_any>
+      <allow_inactive>yes</allow_inactive>
+      <allow_active>yes</allow_active>
     </defaults>
     <annotate key="org.freedesktop.policykit.exec.path">/usr/share/wgtray/lib/disconnect.sh</annotate>
     <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
