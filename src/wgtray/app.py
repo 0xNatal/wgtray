@@ -215,12 +215,6 @@ class WgTray:
 
         self.menu.addSeparator()
 
-        if active:
-            disc = QAction("Disconnect", self.menu)
-            disc.triggered.connect(self.on_disconnect_all)
-            self.menu.addAction(disc)
-            self.menu.addSeparator()
-
         folder = QAction("Open config folder", self.menu)
         folder.triggered.connect(open_config_folder)
         self.menu.addAction(folder)
@@ -298,25 +292,6 @@ class WgTray:
         else:
             logger.error(f"Failed to disconnect from {name}")
             self.show_notification("WireGuard", f"Failed to disconnect from {name}", error=True)
-        self.update_icon()
-
-    def on_disconnect_all(self):
-        logger.info("Disconnecting all")
-        require_pw = self._config.get("require_password", True)
-        success, hook_error, cancelled = disconnect(require_password=require_pw)
-
-        if cancelled:
-            return
-
-        if success:
-            logger.info("All connections closed")
-            msg = "All connections closed"
-            if hook_error:
-                msg += f"\n⚠ Hook failed: {hook_error}"
-            self.show_notification("WireGuard", msg, error=bool(hook_error))
-        else:
-            logger.error("Failed to disconnect")
-            self.show_notification("WireGuard", "Failed to disconnect", error=True)
         self.update_icon()
 
     def on_refresh(self):
