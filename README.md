@@ -60,12 +60,11 @@
 ## Requirements
 
 - Arch Linux (or Arch-based)
-- python-pyqt6
+- pyside6
 - python-pyroute2
 - python-tomlkit
 - wireguard-tools
 - polkit
-- qt6-svg
 
 ## Installation
 
@@ -78,7 +77,7 @@ paru -S wgtray
 ### Manual
 ```bash
 # Install dependencies
-sudo pacman -S python-pyqt6 python-pyroute2 python-tomlkit wireguard-tools polkit qt6-svg
+sudo pacman -S pyside6 python-pyroute2 python-tomlkit wireguard-tools polkit
 
 # Clone and install
 git clone https://github.com/0xNatal/wgtray.git

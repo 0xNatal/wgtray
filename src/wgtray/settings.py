@@ -1,20 +1,20 @@
 """Settings dialog for wgtray."""
 
 from pathlib import Path
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel,
     QCheckBox, QComboBox, QPushButton, QGroupBox,
     QSpinBox, QStyle
 )
-from PyQt6.QtCore import Qt, pyqtSignal
+from PySide6.QtCore import Qt, Signal
 from .config import is_autostart_enabled, set_autostart
 from .constants import HOOKS_DIR
 from .logger import get_log_path
 
 
 class SettingsDialog(QDialog):
-    refresh_clicked = pyqtSignal()
-    about_clicked = pyqtSignal()
+    refresh_clicked = Signal()
+    about_clicked = Signal()
 
     def __init__(self, config, configs_list, monitor_mode="unknown", parent=None):
         super().__init__(parent)

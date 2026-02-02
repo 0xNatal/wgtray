@@ -5,7 +5,7 @@ import sys
 import signal
 from .app import WgTray
 
-# PyQt blocks SIGINT by default
+# PySide6 blocks SIGINT by default
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 

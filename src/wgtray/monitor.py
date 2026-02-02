@@ -1,13 +1,13 @@
 """Network monitoring for wgtray."""
 
 import time
-from PyQt6.QtCore import QThread, pyqtSignal
+from PySide6.QtCore import QThread, Signal
 from .logger import logger
 
 
 class NetlinkMonitor(QThread):
     """Monitor network interface changes via Netlink."""
-    changed = pyqtSignal()
+    changed = Signal()
 
     def __init__(self):
         super().__init__()

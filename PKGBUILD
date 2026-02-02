@@ -8,12 +8,11 @@ url="https://github.com/0xNatal/wgtray"
 license=('GPL-3.0-or-later')
 depends=(
     'python'
-    'python-pyqt6'
+    'pyside6'
     'python-pyroute2'
     'python-tomlkit'
     'wireguard-tools'
     'polkit'
-    'qt6-svg'
 )
 install=wgtray.install
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")

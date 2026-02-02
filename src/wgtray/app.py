@@ -2,9 +2,9 @@
 
 import sys
 import time
-from PyQt6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMessageBox, QDialog
-from PyQt6.QtGui import QIcon, QAction
-from PyQt6.QtCore import QTimer
+from PySide6.QtWidgets import QApplication, QSystemTrayIcon, QMenu, QMessageBox, QDialog
+from PySide6.QtGui import QIcon, QAction
+from PySide6.QtCore import QTimer
 
 from .constants import VERSION, ICONDIR, ICONS
 from .config import load_config, save_config
