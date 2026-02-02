@@ -53,6 +53,8 @@
 - [x] Connection stats (traffic, handshake)
 - [x] Hooks (pre-connect, post-connect, pre-disconnect)
 - [x] Optional password requirement
+- [ ] Auto-reconnect after suspend/resume
+- [ ] Wait for network before auto-connect
 - [ ] CLI flags
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
