@@ -62,6 +62,7 @@
 - Arch Linux (or Arch-based)
 - python-pyqt6
 - python-pyroute2
+- python-tomlkit
 - wireguard-tools
 - polkit
 - qt6-svg
@@ -77,7 +78,7 @@ paru -S wgtray
 ### Manual
 ```bash
 # Install dependencies
-sudo pacman -S python-pyqt6 python-pyroute2 wireguard-tools polkit qt6-svg
+sudo pacman -S python-pyqt6 python-pyroute2 python-tomlkit wireguard-tools polkit qt6-svg
 
 # Clone and install
 git clone https://github.com/0xNatal/wgtray.git
@@ -108,7 +109,7 @@ Right-click → Settings to configure:
 - Monitor mode (Netlink/Polling)
 - Poll interval
 
-Configuration is stored in `~/.config/wgtray/config.json`.
+Configuration is stored in `~/.config/wgtray/config.toml`.
 
 Logs are stored in `~/.local/share/wgtray/wgtray.log`.
 

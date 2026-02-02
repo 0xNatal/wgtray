@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-VERSION = "1.3.0"
+VERSION = "1.4.0"
 
 def find_libdir():
     system_path = Path("/usr/share/wgtray/lib")
@@ -17,7 +17,7 @@ def find_icondir():
 LIBDIR = find_libdir()
 ICONDIR = find_icondir()
 CONFIG_DIR = Path.home() / ".config" / "wgtray"
-CONFIG_FILE = CONFIG_DIR / "config.json"
+CONFIG_FILE = CONFIG_DIR / "config.toml"
 HOOKS_DIR = CONFIG_DIR / "hooks"
 AUTOSTART_FILE = Path.home() / ".config" / "autostart" / "wgtray.desktop"
 SYSTEM_DESKTOP = Path("/usr/share/applications/wgtray.desktop")
