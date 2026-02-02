@@ -54,7 +54,6 @@
 - [x] Hooks (pre-connect, post-connect, pre-disconnect)
 - [x] Optional password requirement
 - [ ] CLI flags
-- [ ] Peer status
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
 ## Requirements
