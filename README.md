@@ -173,6 +173,9 @@ Configuration is stored in `~/.config/wgtray/config.toml`.
 
 Logs are stored in `~/.local/share/wgtray/wgtray.log`.
 
+> [!NOTE]
+> **Security:** When "Require password" is disabled, VPN connections can be started and stopped without authentication. Keep this enabled if you share your machine or run untrusted software.
+
 ### Hooks
 
 Run custom scripts when connecting/disconnecting VPNs. Hooks run as your user (not root).
