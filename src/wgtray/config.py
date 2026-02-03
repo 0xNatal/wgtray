@@ -1,12 +1,11 @@
 """Configuration management for wgtray."""
 
 import json
-import shutil
+import subprocess
 import tomlkit
 
-from .constants import CONFIG_DIR, CONFIG_FILE, AUTOSTART_FILE, SYSTEM_DESKTOP, DEFAULT_CONFIG
+from .constants import CONFIG_DIR, CONFIG_FILE, LIBDIR, DEFAULT_CONFIG
 
-# Old JSON config path
 CONFIG_FILE_JSON = CONFIG_DIR / "config.json"
 
 
@@ -43,7 +42,6 @@ def load_config():
         except Exception:
             pass
     
-    # Create default config on first run
     config = DEFAULT_CONFIG.copy()
     save_config(config)
     return config
@@ -79,17 +77,29 @@ def save_config(config):
         tomlkit.dump(doc, f)
 
 
-def is_autostart_enabled():
-    """Check if autostart is enabled."""
-    return AUTOSTART_FILE.exists()
+def get_autostart_method():
+    """Get current autostart method: 'xdg', 'systemd', or 'none'."""
+    script = LIBDIR / "autostart.sh"
+    if script.exists():
+        result = subprocess.run([str(script), "--get"], capture_output=True, text=True)
+        return result.stdout.strip() if result.returncode == 0 else "none"
+    return "none"
 
 
-def set_autostart(enabled):
-    """Enable or disable autostart."""
-    if enabled:
-        AUTOSTART_FILE.parent.mkdir(parents=True, exist_ok=True)
-        if SYSTEM_DESKTOP.exists():
-            shutil.copy(SYSTEM_DESKTOP, AUTOSTART_FILE)
+def set_autostart(method):
+    """Set autostart method: 'xdg', 'systemd', or 'none'."""
+    script = LIBDIR / "autostart.sh"
+    if not script.exists():
+        return
+    
+    if method == "xdg":
+        subprocess.run([str(script), "--enable-xdg"], capture_output=True)
+    elif method == "systemd":
+        subprocess.run([str(script), "--enable-systemd"], capture_output=True)
     else:
-        if AUTOSTART_FILE.exists():
-            AUTOSTART_FILE.unlink()
+        subprocess.run([str(script), "--disable"], capture_output=True)
+
+
+def is_autostart_enabled():
+    """Check if any autostart is enabled."""
+    return get_autostart_method() != "none"

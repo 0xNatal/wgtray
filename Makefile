@@ -23,6 +23,9 @@ check-deps:
 	@echo "All dependencies found!"
 
 install:
+	# Remove old system-wide autostart (from previous versions)
+	rm -f $(DESTDIR)/etc/xdg/autostart/$(PKGNAME).desktop
+	
 	# Python package
 	install -dm755 $(DESTDIR)$(PYTHON_SITELIB)/$(PKGNAME)
 	install -Dm644 src/wgtray/*.py $(DESTDIR)$(PYTHON_SITELIB)/$(PKGNAME)/
@@ -36,9 +39,11 @@ install:
 	# Icons
 	install -Dm644 -t $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps $(ICONS)
 	
-	# Desktop files
+	# Desktop file
 	install -Dm644 res/desktop/$(PKGNAME).desktop $(DESTDIR)$(PREFIX)/share/applications/$(PKGNAME).desktop
-	install -Dm644 res/desktop/$(PKGNAME).desktop $(DESTDIR)/etc/xdg/autostart/$(PKGNAME).desktop
+	
+	# Systemd user service
+	install -Dm644 res/systemd/$(PKGNAME).service $(DESTDIR)$(PREFIX)/lib/systemd/user/$(PKGNAME).service
 	
 	# Polkit policy
 	install -Dm644 res/polkit/org.$(PKGNAME).policy $(DESTDIR)$(PREFIX)/share/polkit-1/actions/org.$(PKGNAME).policy
@@ -52,7 +57,10 @@ install:
 	@cat res/ascii-logo.txt 2>/dev/null || true
 	@echo ""
 	@echo "Installation complete!"
-	@echo "Run 'wgtray' to start, or logout/login for autostart."
+	@echo ""
+	@echo "Enable autostart:"
+	@echo "  Desktop Environments: wgtray --enable-xdg"
+	@echo "  Window Managers:      wgtray --enable-systemd"
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PKGNAME)
@@ -61,6 +69,7 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/wgtray*.svg
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/$(PKGNAME).desktop
 	rm -f $(DESTDIR)/etc/xdg/autostart/$(PKGNAME).desktop
+	rm -f $(DESTDIR)$(PREFIX)/lib/systemd/user/$(PKGNAME).service
 	rm -f $(DESTDIR)$(PREFIX)/share/polkit-1/actions/org.$(PKGNAME).policy
 	rm -rf $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)
 	@echo "Uninstall complete!"

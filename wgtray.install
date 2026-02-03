@@ -1,19 +1,29 @@
 pre_remove() {
     pkill -f "python3 -m wgtray" 2>/dev/null || true
+    systemctl --user disable wgtray.service 2>/dev/null || true
 }
 
 post_install() {
+    # Remove old system-wide autostart (from previous versions)
+    rm -f /etc/xdg/autostart/wgtray.desktop
+    
     echo ""
     cat /usr/share/doc/wgtray/ascii-logo.txt 2>/dev/null || true
     echo ""
     echo "==> wgtray installed successfully!"
     echo ""
     echo "    Start:     wgtray"
-    echo "    Autostart: Enabled (logout/login to activate)"
+    echo ""
+    echo "    Enable autostart:"
+    echo "      Desktop Environments: wgtray --enable-xdg"
+    echo "      Window Managers:      wgtray --enable-systemd"
     echo ""
 }
 
 post_upgrade() {
+    # Remove old system-wide autostart (from previous versions)
+    rm -f /etc/xdg/autostart/wgtray.desktop
+    
     post_install
 }
 
@@ -22,6 +32,7 @@ pre_upgrade() {
 }
 
 post_remove() {
+    rm -f /etc/xdg/autostart/wgtray.desktop
     echo "==> wgtray removed."
     echo "    User config remains at: ~/.config/wgtray/"
 }

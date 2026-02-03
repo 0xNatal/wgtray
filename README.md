@@ -39,6 +39,8 @@
 - Polkit integration for secure authentication
 - Desktop notifications
 - Left-click to toggle connection
+- CLI interface with autostart management
+- Multiple autostart methods (XDG, Systemd)
 
 ## Roadmap
 
@@ -53,9 +55,10 @@
 - [x] Connection stats (traffic, handshake)
 - [x] Hooks (pre-connect, post-connect, pre-disconnect)
 - [x] Optional password requirement
+- [x] CLI flags
+- [x] Multiple autostart methods (XDG, Systemd)
 - [ ] Auto-reconnect after suspend/resume
 - [ ] Wait for network before auto-connect
-- [ ] CLI flags
 - [ ] Support for other distributions (Ubuntu, Fedora, etc.)
 
 ## Requirements
@@ -93,14 +96,71 @@ wgtray
 
 The app starts minimized in the system tray.
 
+> **Note:** Autostart is not enabled by default. See [Autostart](#autostart) to enable it.
+
 - **Left-click**: Toggle last used connection
 - **Right-click**: Open menu with all configurations
+
+### CLI Options
+```
+wgtray [OPTIONS]
+
+Options:
+  -h, --help          Show help message
+  -v, --version       Show version
+  -d, --debug         Enable debug output
+  --status            Show current autostart method
+  --enable-xdg        Enable XDG autostart (Desktop Environments)
+  --enable-systemd    Enable Systemd autostart (Window Managers)
+  --disable           Disable autostart
+```
+
+### Autostart
+
+To start wgtray automatically at boot, you can either:
+
+**Desktop Environments** (KDE, GNOME, XFCE) – uses [XDG Autostart](https://wiki.archlinux.org/title/XDG_Autostart):
+```bash
+wgtray --enable-xdg
+```
+
+**Window Managers** (i3, Hyprland, Sway) – uses systemd user service:
+```bash
+wgtray --enable-systemd
+```
+
+**Manual** – add to your WM config:
+
+Hyprland (`~/.config/hypr/hyprland.conf`):
+```
+exec-once = wgtray
+```
+
+i3 (`~/.config/i3/config`):
+```
+exec --no-startup-id wgtray
+```
+
+Sway (`~/.config/sway/config`):
+```
+exec wgtray
+```
+
+Check current method:
+```bash
+wgtray --status
+```
+
+Disable autostart:
+```bash
+wgtray --disable
+```
 
 ### Settings
 
 Right-click → Settings to configure:
 
-- Autostart on login
+- Autostart method (Off / XDG / Systemd)
 - Desktop notifications
 - Auto-connect on startup
 - Require password
@@ -147,9 +207,30 @@ Make executable: `chmod +x ~/.config/wgtray/hooks/wg0.post-connect`
 
 ### Troubleshooting
 
-For debug output, run:
+**GNOME users:** GNOME does not support systray icons natively. Install the [AppIndicator extension](https://extensions.gnome.org/extension/615/appindicator-support/) for the tray icon to appear.
+
+**Tray icon doesn't appear at startup:** This could be a [race condition](https://en.wikipedia.org/wiki/Race_condition#In_software). Add a delay:
+
+- XDG: Edit `~/.config/autostart/wgtray.desktop`:
+```
+  Exec=/bin/sh -c "sleep 3 && wgtray"
+```
+
+- Systemd: Run `systemctl --user edit --full wgtray.service`:
+```
+  ExecStart=/bin/sh -c "sleep 3 && /usr/bin/wgtray"
+```
+
+Increase the `sleep` value if needed.
+
+**Debug output:**
 ```bash
 wgtray --debug
+```
+
+**Systemd logs:**
+```bash
+journalctl --user -u wgtray.service
 ```
 
 ## Contributing

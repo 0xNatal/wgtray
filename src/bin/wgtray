@@ -1,2 +1,57 @@
-#!/bin/sh
-exec python3 -m wgtray "$@"
+#!/bin/bash
+set -euo pipefail
+
+VERSION="1.4.0"
+LIBDIR="/usr/share/wgtray/lib"
+
+[[ -d "$LIBDIR" ]] || LIBDIR="$(dirname "$0")/../lib"
+
+print_help() {
+    cat <<EOF
+wgtray $VERSION - WireGuard system tray client
+
+Usage: wgtray [OPTIONS]
+
+Options:
+  -h, --help            Show this help message
+  -v, --version         Show version
+  -d, --debug           Enable debug output
+  --status              Show autostart status
+  --enable-xdg          Enable XDG autostart (Desktop Environments)
+  --enable-systemd      Enable systemd autostart (Window Managers)
+  --disable             Disable autostart
+EOF
+}
+
+case "${1:-}" in
+    -h|--help)
+        print_help
+        ;;
+    -v|--version)
+        echo "wgtray $VERSION"
+        ;;
+    --status)
+        method=$("$LIBDIR/autostart.sh" --get)
+        echo "Autostart: $method"
+        ;;
+    --enable-xdg)
+        "$LIBDIR/autostart.sh" --enable-xdg
+        ;;
+    --enable-systemd)
+        "$LIBDIR/autostart.sh" --enable-systemd
+        ;;
+    --disable)
+        "$LIBDIR/autostart.sh" --disable
+        ;;
+    -d|--debug)
+        exec python3 -m wgtray --debug
+        ;;
+    "")
+        exec python3 -m wgtray
+        ;;
+    *)
+        echo "Unknown option: $1" >&2
+        echo "Run 'wgtray --help' for usage" >&2
+        exit 1
+        ;;
+esac

@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (
     QSpinBox, QStyle
 )
 from PySide6.QtCore import Qt, Signal
-from .config import is_autostart_enabled, set_autostart
+from .config import get_autostart_method, set_autostart
 from .constants import HOOKS_DIR
 from .logger import get_log_path
 
@@ -31,9 +31,18 @@ class SettingsDialog(QDialog):
         general_group = QGroupBox("General")
         general_layout = QVBoxLayout(general_group)
 
-        self.autostart_cb = QCheckBox("Start on login")
-        self.autostart_cb.setChecked(is_autostart_enabled())
-        general_layout.addWidget(self.autostart_cb)
+        autostart_layout = QHBoxLayout()
+        autostart_layout.addWidget(QLabel("Autostart:"))
+        self.autostart_combo = QComboBox()
+        self.autostart_combo.addItem("Off", "none")
+        self.autostart_combo.addItem("XDG (Desktop Environments)", "xdg")
+        self.autostart_combo.addItem("Systemd (Window Managers)", "systemd")
+        current_method = get_autostart_method()
+        idx = self.autostart_combo.findData(current_method)
+        if idx >= 0:
+            self.autostart_combo.setCurrentIndex(idx)
+        autostart_layout.addWidget(self.autostart_combo, 1)
+        general_layout.addLayout(autostart_layout)
 
         self.notifications_cb = QCheckBox("Show notifications")
         self.notifications_cb.setChecked(self.config.get("notifications", True))
@@ -169,7 +178,7 @@ class SettingsDialog(QDialog):
 
     def get_config(self):
         """Return updated config after dialog accepted."""
-        set_autostart(self.autostart_cb.isChecked())
+        set_autostart(self.autostart_combo.currentData())
 
         return {
             **self.config,
