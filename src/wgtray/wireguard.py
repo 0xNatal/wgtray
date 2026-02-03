@@ -14,7 +14,7 @@ def run_script(script_name, *args, use_pkexec=False):
     """Run a helper script, optionally with pkexec for root privileges."""
     script_path = LIBDIR / script_name
     if not script_path.exists():
-        print(f"Error: {script_path} not found", file=sys.stderr)
+        logger.error(f"Script not found: {script_path}")
         return None, 1
 
     cmd = ["pkexec", str(script_path)] if use_pkexec else [str(script_path)]

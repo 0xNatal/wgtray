@@ -48,7 +48,7 @@ def get_icon(name, theme="auto"):
     if icon_path.exists():
         return QIcon(str(icon_path))
 
-    print(f"Warning: Icon not found: {icon_path}", file=sys.stderr)
+    logger.warning(f"Icon not found: {icon_path}")
     return QIcon()
 
 
@@ -105,7 +105,7 @@ class WgTray:
                 self.netlink.start()
 
         if mode == "netlink" and not use_netlink:
-            print("Warning: Netlink requested but not available, falling back to polling", file=sys.stderr)
+            logger.warning("Netlink requested but not available, falling back to polling")
 
         interval = self._config.get("poll_interval", 3000)
         self.poll_timer.start(interval)

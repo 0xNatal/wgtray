@@ -5,6 +5,7 @@ import subprocess
 import tomlkit
 
 from .constants import CONFIG_DIR, CONFIG_FILE, LIBDIR, DEFAULT_CONFIG
+from .logger import logger
 
 CONFIG_FILE_JSON = CONFIG_DIR / "config.json"
 
@@ -17,8 +18,9 @@ def _migrate_from_json():
                 old_config = json.load(f)
             save_config(old_config)
             CONFIG_FILE_JSON.rename(CONFIG_FILE_JSON.with_suffix(".json.bak"))
-        except Exception:
-            pass
+            logger.info("Migrated config from JSON to TOML")
+        except Exception as e:
+            logger.warning(f"Failed to migrate JSON config: {e}")
 
 
 def load_config():
@@ -39,8 +41,8 @@ def load_config():
                 "monitor_mode": doc.get("advanced", {}).get("monitor_mode", DEFAULT_CONFIG["monitor_mode"]),
                 "poll_interval": doc.get("advanced", {}).get("poll_interval", DEFAULT_CONFIG["poll_interval"]),
             }
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f"Failed to load config: {e}")
     
     config = DEFAULT_CONFIG.copy()
     save_config(config)
@@ -90,6 +92,7 @@ def set_autostart(method):
     """Set autostart method: 'xdg', 'systemd', or 'none'."""
     script = LIBDIR / "autostart.sh"
     if not script.exists():
+        logger.warning(f"Autostart script not found: {script}")
         return
     
     if method == "xdg":
@@ -98,6 +101,8 @@ def set_autostart(method):
         subprocess.run([str(script), "--enable-systemd"], capture_output=True)
     else:
         subprocess.run([str(script), "--disable"], capture_output=True)
+    
+    logger.info(f"Autostart set to: {method}")
 
 
 def is_autostart_enabled():
