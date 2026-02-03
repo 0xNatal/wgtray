@@ -1,3 +1,20 @@
+## [1.4.0] - 2026-02-03
+
+### 🚀 Features
+
+- [**breaking**] Add CLI autostart management with XDG and systemd support
+
+### 🚜 Refactor
+
+- Switch config from JSON to TOML
+- Switch from PyQt6 to PySide6
+- Remove redundant disconnect button
+- Replace print statements with logger
+
+### 📚 Documentation
+
+- Remove peer status from roadmap
+- Update roadmap with D-Bus features
 ## [1.3.0] - 2026-02-01
 
 ### 🚀 Features
@@ -11,6 +28,10 @@
 ### 🐛 Bug Fixes
 
 - Show correct logo
+
+### 💼 Other
+
+- V1.3.0
 
 ### 🚜 Refactor
 
