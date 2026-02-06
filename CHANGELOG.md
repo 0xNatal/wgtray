@@ -1,8 +1,26 @@
+## [1.5.0] - 2026-02-06
+
+### 🚀 Features
+
+- [**breaking**] Run hooks as root with sudoers integration
+
+### 📚 Documentation
+
+- *(readme)* Add security note for require password setting
+
+### ⚙️ Miscellaneous Tasks
+
+- Add hooks migration warning to install script
+- Clean up install output
 ## [1.4.0] - 2026-02-03
 
 ### 🚀 Features
 
 - [**breaking**] Add CLI autostart management with XDG and systemd support
+
+### 💼 Other
+
+- V1.4.0
 
 ### 🚜 Refactor
 
