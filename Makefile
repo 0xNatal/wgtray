@@ -52,15 +52,6 @@ install:
 	install -Dm644 README.md $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/README.md
 	install -Dm644 LICENSE $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/LICENSE
 	install -Dm644 res/ascii-logo.txt $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)/ascii-logo.txt
-	
-	@echo ""
-	@cat res/ascii-logo.txt 2>/dev/null || true
-	@echo ""
-	@echo "Installation complete!"
-	@echo ""
-	@echo "Enable autostart:"
-	@echo "  Desktop Environments: wgtray --enable-xdg"
-	@echo "  Window Managers:      wgtray --enable-systemd"
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PKGNAME)
@@ -72,4 +63,3 @@ uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/lib/systemd/user/$(PKGNAME).service
 	rm -f $(DESTDIR)$(PREFIX)/share/polkit-1/actions/org.$(PKGNAME).policy
 	rm -rf $(DESTDIR)$(PREFIX)/share/doc/$(PKGNAME)
-	@echo "Uninstall complete!"
