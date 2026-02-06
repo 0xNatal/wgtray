@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-VERSION="1.4.0"
+VERSION="1.5.0"
 LIBDIR="/usr/share/wgtray/lib"
 
 [[ -d "$LIBDIR" ]] || LIBDIR="$(dirname "$0")/../lib"
@@ -13,13 +13,16 @@ wgtray $VERSION - WireGuard system tray client
 Usage: wgtray [OPTIONS]
 
 Options:
-  -h, --help            Show this help message
-  -v, --version         Show version
-  -d, --debug           Enable debug output
-  --status              Show autostart status
-  --enable-xdg          Enable XDG autostart (Desktop Environments)
-  --enable-systemd      Enable systemd autostart (Window Managers)
-  --disable             Disable autostart
+  -h, --help              Show this help message
+  -v, --version           Show version
+  -d, --debug             Enable debug output
+  --status                Show autostart status
+  --enable-xdg            Enable XDG autostart (Desktop Environments)
+  --enable-systemd        Enable systemd autostart (Window Managers)
+  --disable               Disable autostart
+  --hook <iface> <event>  Create/edit hook script
+  --list-hooks            List all hooks
+  --remove-hook <i> <e>   Remove a hook
 EOF
 }
 
@@ -31,8 +34,7 @@ case "${1:-}" in
         echo "wgtray $VERSION"
         ;;
     --status)
-        method=$("$LIBDIR/autostart.sh" --get)
-        echo "Autostart: $method"
+        "$LIBDIR/autostart.sh" --get | xargs -I{} echo "Autostart: {}"
         ;;
     --enable-xdg)
         "$LIBDIR/autostart.sh" --enable-xdg
@@ -42,6 +44,15 @@ case "${1:-}" in
         ;;
     --disable)
         "$LIBDIR/autostart.sh" --disable
+        ;;
+    --hook)
+        "$LIBDIR/hooks.sh" --create "${2:-}" "${3:-}"
+        ;;
+    --list-hooks)
+        "$LIBDIR/hooks.sh" --list
+        ;;
+    --remove-hook)
+        "$LIBDIR/hooks.sh" --remove "${2:-}" "${3:-}"
         ;;
     -d|--debug)
         exec python3 -m wgtray --debug

@@ -106,13 +106,16 @@ The app starts minimized in the system tray.
 wgtray [OPTIONS]
 
 Options:
-  -h, --help          Show help message
-  -v, --version       Show version
-  -d, --debug         Enable debug output
-  --status            Show current autostart method
-  --enable-xdg        Enable XDG autostart (Desktop Environments)
-  --enable-systemd    Enable Systemd autostart (Window Managers)
-  --disable           Disable autostart
+  -h, --help              Show help message
+  -v, --version           Show version
+  -d, --debug             Enable debug output
+  --status                Show current autostart method
+  --enable-xdg            Enable XDG autostart (Desktop Environments)
+  --enable-systemd        Enable Systemd autostart (Window Managers)
+  --disable               Disable autostart
+  --hook <iface> <event>  Create/edit hook script
+  --list-hooks            List all hooks
+  --remove-hook <i> <e>   Remove a hook
 ```
 
 ### Autostart
@@ -178,16 +181,16 @@ Logs are stored in `~/.local/share/wgtray/wgtray.log`.
 
 ### Hooks
 
-Run custom scripts when connecting/disconnecting VPNs. Hooks run as your user (not root).
+Run custom scripts when connecting/disconnecting VPNs. Hooks run as root, allowing privileged commands like `mount` or `systemctl`.
 
-Create executable scripts in `~/.config/wgtray/hooks/`:
+**Create a hook:**
 ```bash
-~/.config/wgtray/hooks/wg0.pre-connect      # Before connecting
-~/.config/wgtray/hooks/wg0.post-connect     # After connecting
-~/.config/wgtray/hooks/wg0.pre-disconnect   # Before disconnecting
+wgtray --hook wg0 post-connect
 ```
 
-**Hook naming:** `<interface>.<event>`
+This creates the hook script and sudoers rule, then opens your editor.
+
+**Available events:**
 
 | Event | When |
 |-------|------|
@@ -195,18 +198,31 @@ Create executable scripts in `~/.config/wgtray/hooks/`:
 | `post-connect` | After successful connection |
 | `pre-disconnect` | Before disconnecting (after authentication) |
 
+**Example hook:**
+```bash
+#!/bin/bash
+# /usr/local/lib/wgtray/hooks/wg0-post-connect
+mount /mnt/share
+systemctl start my-service
+```
+
 **Environment variables available in hooks:**
 - `WGTRAY_INTERFACE` – Interface name (e.g., `wg0`)
 - `WGTRAY_EVENT` – Event type (`pre-connect`, `post-connect`, or `pre-disconnect`)
 
-**Example hook:**
+**Manage hooks:**
 ```bash
-#!/bin/bash
-# ~/.config/wgtray/hooks/wg0.post-connect
-notify-send "Connected to $WGTRAY_INTERFACE"
+wgtray --list-hooks                     # List all hooks
+wgtray --hook wg0 post-connect          # Edit existing hook
+wgtray --remove-hook wg0 post-connect   # Remove hook
 ```
 
-Make executable: `chmod +x ~/.config/wgtray/hooks/wg0.post-connect`
+**How it works:**
+
+Hooks are stored in `/usr/local/lib/wgtray/hooks/` and owned by root. A corresponding sudoers rule in `/etc/sudoers.d/` allows passwordless execution. This ensures security while enabling privileged commands.
+
+> [!NOTE]
+> To edit a hook after creation, run the same `--hook` command again or use `sudo nano /usr/local/lib/wgtray/hooks/<interface>-<event>`.
 
 ### Troubleshooting
 

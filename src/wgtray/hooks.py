@@ -8,18 +8,15 @@ from .logger import logger
 
 
 def get_hook_path(interface: str, event: str) -> Path | None:
-    """Get path to hook script if it exists and is executable."""
-    hook = HOOKS_DIR / f"{interface}.{event}"
+    """Get path to hook script if it exists."""
+    hook = HOOKS_DIR / f"{interface}-{event}"
     if hook.exists() and hook.is_file():
-        if not hook.stat().st_mode & 0o100:
-            logger.warning(f"Hook exists but not executable: {hook}")
-            return None
         return hook
     return None
 
 
 def run_hook(interface: str, event: str) -> tuple[bool, str | None]:
-    """Run a hook script.
+    """Run a hook script with sudo.
     
     Args:
         interface: WireGuard interface name (e.g., 'wg0')
@@ -36,7 +33,7 @@ def run_hook(interface: str, event: str) -> tuple[bool, str | None]:
     
     try:
         result = subprocess.run(
-            [str(hook_path)],
+            ["sudo", str(hook_path)],
             capture_output=True,
             text=True,
             timeout=30,
@@ -57,14 +54,6 @@ def run_hook(interface: str, event: str) -> tuple[bool, str | None]:
     except subprocess.TimeoutExpired:
         logger.error(f"Hook timed out: {hook_path}")
         return False, "Timeout (30s)"
-    except PermissionError:
-        logger.error(f"Hook permission denied: {hook_path}")
-        return False, "Permission denied"
     except Exception as e:
         logger.error(f"Hook error: {hook_path}: {e}")
         return False, str(e)
-
-
-def ensure_hooks_dir():
-    """Create hooks directory if it doesn't exist."""
-    HOOKS_DIR.mkdir(parents=True, exist_ok=True)

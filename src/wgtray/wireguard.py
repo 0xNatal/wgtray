@@ -5,7 +5,7 @@ import sys
 import os
 import time
 from pathlib import Path
-from .constants import LIBDIR, HOOKS_DIR
+from .constants import LIBDIR
 from .hooks import run_hook
 from .logger import logger
 
@@ -53,11 +53,6 @@ def authenticate() -> bool:
     except Exception as e:
         logger.error(f"Authentication error: {e}")
         return False
-
-
-def ensure_hooks_dir():
-    """Create hooks directory if it doesn't exist."""
-    HOOKS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def get_active_connections():
@@ -130,8 +125,6 @@ def connect(name, require_password=True):
     Returns:
         Tuple of (success, hook_error, cancelled)
     """
-    ensure_hooks_dir()
-    
     # Authenticate if required
     if require_password:
         if not authenticate():
@@ -162,7 +155,6 @@ def disconnect(name=None, require_password=True):
     Returns:
         Tuple of (success, hook_error, cancelled)
     """
-    ensure_hooks_dir()
     hook_errors = []
     
     # Get interfaces

@@ -8,7 +8,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, Signal
 from .config import get_autostart_method, set_autostart
-from .constants import HOOKS_DIR
 from .logger import get_log_path
 
 
@@ -139,15 +138,6 @@ class SettingsDialog(QDialog):
         log_path.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
         log_layout.addWidget(log_path, 1)
         info_layout.addLayout(log_layout)
-
-        hooks_layout = QHBoxLayout()
-        hooks_layout.addWidget(QLabel("Hooks folder:"))
-        hooks_display = str(HOOKS_DIR).replace(str(Path.home()), "~")
-        hooks_path = QLabel(f"<a href='file://{HOOKS_DIR}'>{hooks_display}</a>")
-        hooks_path.setOpenExternalLinks(True)
-        hooks_path.setTextInteractionFlags(Qt.TextInteractionFlag.TextBrowserInteraction)
-        hooks_layout.addWidget(hooks_path, 1)
-        info_layout.addLayout(hooks_layout)
 
         layout.addWidget(info_group)
 
