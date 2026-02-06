@@ -4,7 +4,6 @@ pre_remove() {
 }
 
 post_install() {
-    # Remove old system-wide autostart (from previous versions)
     rm -f /etc/xdg/autostart/wgtray.desktop
     
     echo ""
@@ -21,8 +20,19 @@ post_install() {
 }
 
 post_upgrade() {
-    # Remove old system-wide autostart (from previous versions)
     rm -f /etc/xdg/autostart/wgtray.desktop
+    
+    # Warn about hooks migration
+    if [ -d "$HOME/.config/wgtray/hooks" ] && [ "$(ls -A "$HOME/.config/wgtray/hooks" 2>/dev/null)" ]; then
+        echo ""
+        echo "==> WARNING: Hooks location changed!"
+        echo "    Old: ~/.config/wgtray/hooks/"
+        echo "    New: /usr/local/lib/wgtray/hooks/"
+        echo ""
+        echo "    Recreate your hooks with: wgtray --hook <interface> <event>"
+        echo "    Old hooks will no longer run."
+        echo ""
+    fi
     
     post_install
 }
@@ -35,4 +45,6 @@ post_remove() {
     rm -f /etc/xdg/autostart/wgtray.desktop
     echo "==> wgtray removed."
     echo "    User config remains at: ~/.config/wgtray/"
+    echo "    Hooks remain at: /usr/local/lib/wgtray/hooks/"
+    echo "    Sudoers rules remain at: /etc/sudoers.d/wgtray-*"
 }
