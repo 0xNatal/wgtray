@@ -1,9 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+# Load constants
+CONSTANTS="/usr/share/wgtray/constants.conf"
+[[ -f "$CONSTANTS" ]] || CONSTANTS="$(dirname "$0")/../../res/constants.conf"
+source "$CONSTANTS"
+
 XDG_AUTOSTART_FILE="$HOME/.config/autostart/wgtray.desktop"
-SYSTEM_DESKTOP="/usr/share/applications/wgtray.desktop"
-SYSTEMD_SERVICE="wgtray.service"
 
 get_method() {
     if systemctl --user is-enabled "$SYSTEMD_SERVICE" &>/dev/null; then

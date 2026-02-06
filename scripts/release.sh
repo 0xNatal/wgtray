@@ -45,11 +45,8 @@ esac
 # Update version in PKGBUILD
 sed -i "s/pkgver=.*/pkgver=$VERSION/" PKGBUILD
 
-# Update version in constants.py
-sed -i "s/VERSION = .*/VERSION = \"$VERSION\"/" src/wgtray/constants.py
-
-# Update version in bin/wgtray
-sed -i "s/VERSION=.*/VERSION=\"$VERSION\"/" src/bin/wgtray
+# Update version in constants.conf (single source of truth)
+sed -i "s/VERSION=.*/VERSION=$VERSION/" res/constants.conf
 
 # Update changelog
 git-cliff --tag "v$VERSION" -o CHANGELOG.md
@@ -65,7 +62,7 @@ case "$answer" in
 esac
 
 # Commit, tag, push
-git add PKGBUILD CHANGELOG.md src/wgtray/constants.py src/bin/wgtray
+git add PKGBUILD CHANGELOG.md res/constants.conf
 git commit -m "release: v$VERSION"
 git tag "v$VERSION"
 git push

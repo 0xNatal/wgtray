@@ -33,8 +33,11 @@ install:
 	# Launcher script
 	install -Dm755 src/bin/$(PKGNAME) $(DESTDIR)$(PREFIX)/bin/$(PKGNAME)
 	
-	# Helper scripts
-	install -Dm755 -t $(DESTDIR)$(PREFIX)/share/$(PKGNAME)/lib src/lib/*.sh
+	# Helper scripts (to /usr/lib/)
+	install -Dm755 -t $(DESTDIR)$(PREFIX)/lib/$(PKGNAME) src/lib/*.sh
+	
+	# Constants (to /usr/share/)
+	install -Dm644 res/constants.conf $(DESTDIR)$(PREFIX)/share/$(PKGNAME)/constants.conf
 	
 	# Icons
 	install -Dm644 -t $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps $(ICONS)
@@ -56,6 +59,7 @@ install:
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/$(PKGNAME)
 	rm -rf $(DESTDIR)$(PYTHON_SITELIB)/$(PKGNAME)
+	rm -rf $(DESTDIR)$(PREFIX)/lib/$(PKGNAME)
 	rm -rf $(DESTDIR)$(PREFIX)/share/$(PKGNAME)
 	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/scalable/apps/wgtray*.svg
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/$(PKGNAME).desktop

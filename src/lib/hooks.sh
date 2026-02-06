@@ -1,13 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-HOOK_DIR="/usr/local/lib/wgtray/hooks"
-SUDOERS_DIR="/etc/sudoers.d"
-EVENTS=("pre-connect" "post-connect" "pre-disconnect")
+# Load constants
+CONSTANTS="/usr/share/wgtray/constants.conf"
+[[ -f "$CONSTANTS" ]] || CONSTANTS="$(dirname "$0")/../../res/constants.conf"
+source "$CONSTANTS"
+
+# Convert comma-separated to array
+IFS=',' read -ra EVENTS_ARRAY <<< "$EVENTS"
 
 validate_event() {
     local event="$1"
-    for e in "${EVENTS[@]}"; do
+    for e in "${EVENTS_ARRAY[@]}"; do
         [[ "$event" == "$e" ]] && return 0
     done
     return 1
@@ -16,17 +20,17 @@ validate_event() {
 create_hook() {
     local iface="$1"
     local event="$2"
-    local hook="$HOOK_DIR/${iface}-${event}"
+    local hook="$HOOKS_DIR/${iface}-${event}"
     local sudoers="$SUDOERS_DIR/wgtray-${iface}-${event}"
     
     if ! validate_event "$event"; then
         echo "Invalid event: $event" >&2
-        echo "Valid events: ${EVENTS[*]}" >&2
+        echo "Valid events: $EVENTS" >&2
         exit 1
     fi
     
     # Create hooks directory
-    sudo mkdir -p "$HOOK_DIR"
+    sudo mkdir -p "$HOOKS_DIR"
     
     if [[ ! -f "$hook" ]]; then
         echo "Creating $hook..."
@@ -60,13 +64,13 @@ EOF
 }
 
 list_hooks() {
-    if [[ ! -d "$HOOK_DIR" ]]; then
+    if [[ ! -d "$HOOKS_DIR" ]]; then
         echo "No hooks found"
         return
     fi
     
     local found=false
-    for hook in "$HOOK_DIR"/*; do
+    for hook in "$HOOKS_DIR"/*; do
         [[ -f "$hook" ]] || continue
         found=true
         basename "$hook"
@@ -77,7 +81,7 @@ list_hooks() {
 remove_hook() {
     local iface="$1"
     local event="$2"
-    local hook="$HOOK_DIR/${iface}-${event}"
+    local hook="$HOOKS_DIR/${iface}-${event}"
     local sudoers="$SUDOERS_DIR/wgtray-${iface}-${event}"
     
     if [[ -f "$hook" ]]; then
