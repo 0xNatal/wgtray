@@ -22,9 +22,6 @@
   </a>
 </p>
 
-> [!WARNING]
-> **Work in Progress** – This project is under active development.
-
 ## Features
 
 - Quick switch between VPN configurations
